@@ -9,8 +9,8 @@ MealPal là ứng dụng di động hỗ trợ người dùng lập kế hoạch
 
 ### Clone repository
 ```bash
-git clone https://github.com/evgo-team/mealpal-be.git
-cd mealpal-be
+git clone https://github.com/evgo-team/backend.git
+cd backend
 ```
 
 ### Run with Docker
