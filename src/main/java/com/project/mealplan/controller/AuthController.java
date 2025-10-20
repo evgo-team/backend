@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.mealplan.dtos.auth.request.LoginRequest;
 import com.project.mealplan.dtos.auth.response.LoginResponse;
 import com.project.mealplan.dtos.auth.response.TokenResponse;
+import com.project.mealplan.dtos.auth.request.RefreshTokenRequest;
 import com.project.mealplan.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,14 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest req, HttpServletResponse res) {
-        authService.logout(req, res);
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest req, HttpServletResponse res, @Valid @RequestBody RefreshTokenRequest payload) {
+        authService.logout(req, res, payload);
         ApiResponse<Void> response = new ApiResponse<>(200, "Logout successful", null);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<TokenResponse>> refresh(HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity<ApiResponse<TokenResponse>> refresh(@Valid @RequestBody RefreshTokenRequest req, HttpServletResponse res) {
         TokenResponse data = authService.refreshToken(req, res);
         ApiResponse<TokenResponse> response = new ApiResponse<>(HttpStatus.OK.value(), "Refresh success", data);
         return ResponseEntity.ok(response);

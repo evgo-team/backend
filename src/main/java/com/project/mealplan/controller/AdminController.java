@@ -69,7 +69,7 @@ public class AdminController {
 
                 log.info("Admin updating ingredient with ID: {}", id);
                 log.debug("Update data: {}", updateDto);
-
+                
                 IngredientResponseDto updatedIngredient = ingredientService.updateIngredient(id, updateDto);
 
                 return ResponseEntity.ok(ApiResponse.<IngredientResponseDto>builder()
