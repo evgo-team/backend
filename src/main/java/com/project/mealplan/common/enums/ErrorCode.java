@@ -29,7 +29,9 @@ public enum ErrorCode {
     INGREDIENT_IN_USE(2006, HttpStatus.CONFLICT, "Ingredient is being used and cannot be deleted"),
 
     // ====== RECIPE ======
-    RECIPE_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "Recipe not found");
+    RECIPE_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "Recipe not found"),
+    RECIPE_TITLE_ALREADY_EXISTS(3002, HttpStatus.CONFLICT, "Recipe title already exists"),
+    CATEGORY_NOT_FOUND(3003, HttpStatus.NOT_FOUND, "Category not found");
 
     private final int code;
     private final HttpStatus status;

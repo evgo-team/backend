@@ -1,7 +1,7 @@
 package com.project.mealplan.common.enums;
 
 public enum NutritionUnit {
-    KCAL,   // kilocalories
+    CAL,    // calories
     KJ,     // kilojoules
     G,      // grams
     MG,     // milligrams
