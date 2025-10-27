@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ingredient_nutrition")
+@Table(
+    name = "ingredient_nutrition",
+    uniqueConstraints = @UniqueConstraint(columnNames = { "ingredient_id", "nutrition_type_id" })
+)
 public class IngredientNutrition {
 
     @Id
