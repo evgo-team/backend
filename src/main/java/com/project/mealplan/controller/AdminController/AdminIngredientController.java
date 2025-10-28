@@ -1,11 +1,13 @@
 package com.project.mealplan.controller.AdminController;
 
 import com.project.mealplan.common.response.ApiResponse;
+import com.project.mealplan.common.response.PagePayLoad;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientDto;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientResponseDto;
 import com.project.mealplan.dtos.admin.IngredientResponseDto;
 import com.project.mealplan.dtos.admin.UpdateIngredientDto;
 import com.project.mealplan.dtos.ingredient.request.IngredientCreateRequest;
+import com.project.mealplan.dtos.ingredient.response.IngredientListItemResponse;
 import com.project.mealplan.dtos.ingredient.response.IngredientResponse;
 import com.project.mealplan.service.IngredientService;
 
@@ -17,6 +19,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -144,6 +148,31 @@ public class AdminIngredientController {
                                                 .status(200)
                                                 .message("Ingredient detail retrieved successfully")
                                                 .data(data)
+                                                .build());
+        }
+        
+        @Operation(summary = "Search & list ingredients with filters/pagination")
+        @GetMapping("")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<ApiResponse<PagePayLoad<IngredientListItemResponse>>> listIngredients(
+                        @RequestParam(required = false) String type,
+                        @RequestParam(required = false) BigDecimal minCalories,
+                        @RequestParam(required = false) BigDecimal maxCalories,
+                        @RequestParam(required = false, defaultValue = "name") String sortBy,
+                        @RequestParam(required = false, defaultValue = "asc") String sortDir,
+                        @RequestParam(required = false, defaultValue = "0") Integer page,
+                        @RequestParam(required = false, defaultValue = "10") Integer size,
+                        @RequestParam(required = false) String keyword) {
+                Page<IngredientListItemResponse> result = ingredientService.searchIngredients(
+                                type, minCalories, maxCalories, keyword, page, size, sortBy, sortDir);
+
+                PagePayLoad<IngredientListItemResponse> payload = PagePayLoad.of(result);
+
+                return ResponseEntity.ok(
+                                ApiResponse.<PagePayLoad<IngredientListItemResponse>>builder()
+                                                .status(200)
+                                                .message("Ingredients retrieved successfully")
+                                                .data(payload)
                                                 .build());
         }
 }
