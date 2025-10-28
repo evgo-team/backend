@@ -304,4 +304,7 @@ public class IngredientServiceImpl implements IngredientService {
                                 i.getType().toString()));
         }
 
+        public List<NutritionType> getAllNutritions() {
+                return nutritionTypeRepository.findAll();
+        }
 }

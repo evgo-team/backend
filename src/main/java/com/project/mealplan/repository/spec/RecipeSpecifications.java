@@ -19,6 +19,11 @@ public final class RecipeSpecifications {
 
     private RecipeSpecifications() {}
 
+    public static Specification<Recipe> isPublicOnlyForUser(boolean isAdmin) {
+        if (isAdmin) return (root, query, cb) -> cb.conjunction(); 
+        return (root, query, cb) -> cb.equal(root.get("status"), RecipeStatus.PUBLISHED);
+    }
+
     public static Specification<Recipe> hasStatus(RecipeStatus status) {
         return (root, query, cb) -> (status == null) ? null : cb.equal(root.get("status"), status);
     }
@@ -40,7 +45,6 @@ public final class RecipeSpecifications {
         };
     }
 
-    @SuppressWarnings("null")
     public static Specification<Recipe> caloriesBetween(BigDecimal min, BigDecimal max) {
         return (root, query, cb) -> {
             if (min == null && max == null) return null;

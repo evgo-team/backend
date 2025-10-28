@@ -1,6 +1,7 @@
 package com.project.mealplan.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 
@@ -11,6 +12,7 @@ import com.project.mealplan.dtos.admin.UpdateIngredientDto;
 import com.project.mealplan.dtos.ingredient.request.IngredientCreateRequest;
 import com.project.mealplan.dtos.ingredient.response.IngredientListItemResponse;
 import com.project.mealplan.dtos.ingredient.response.IngredientResponse;
+import com.project.mealplan.entity.NutritionType;
 
 public interface IngredientService {
         IngredientResponse createIngredient(IngredientCreateRequest req);
@@ -32,4 +34,6 @@ public interface IngredientService {
                         int size,
                         String sortBy,
                         String sortDir);
+
+        List<NutritionType> getAllNutritions();
 }
