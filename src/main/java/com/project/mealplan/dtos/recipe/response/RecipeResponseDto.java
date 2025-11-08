@@ -11,7 +11,7 @@ import java.util.Set;
 import com.project.mealplan.common.enums.MealRole;
 import com.project.mealplan.common.enums.MealType;
 import com.project.mealplan.common.enums.RecipeStatus;
-
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +23,7 @@ public class RecipeResponseDto {
     private String instructions;
     private Integer cookingTimeMinutes;
     private String imageUrl;
+    private BigDecimal calories;
     private RecipeStatus status;
     private MealRole role;
     private MealType mealType;

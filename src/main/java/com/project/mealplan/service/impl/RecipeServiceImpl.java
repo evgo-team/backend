@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.project.mealplan.common.util.CalculateCalories;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +83,8 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
 
+        // calculate calories before saving
+        recipe.setCalories(CalculateCalories.computeRecipeCalories(recipe));
         Recipe saved = recipeRepository.save(recipe);
         return convertToDto(saved);
     } 
@@ -211,6 +214,8 @@ public class RecipeServiceImpl implements RecipeService {
             throw new AppException(ErrorCode.VALIDATION_ERROR, "Không có thay đổi nào để lưu.");
         }
 
+        // Recalculate calories after potential ingredient/status changes
+        recipe.setCalories(CalculateCalories.computeRecipeCalories(recipe));
         Recipe saved = recipeRepository.save(recipe);
 
         return convertToDto(saved);
@@ -247,6 +252,7 @@ public class RecipeServiceImpl implements RecipeService {
                 ))
                 .collect(Collectors.toList());
         dto.setIngredients(ingList);
+        dto.setCalories(recipe.getCalories());
 
         return dto;
     }
@@ -326,7 +332,8 @@ public class RecipeServiceImpl implements RecipeService {
                 r.getStatus(),
                 r.getCategories().stream()
                     .map(RecipeCategory::getName)
-                    .collect(Collectors.toSet())
+                    .collect(Collectors.toSet()),
+                r.getCalories()
         ));
     }
     

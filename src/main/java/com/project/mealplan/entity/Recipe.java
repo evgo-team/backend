@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import java.math.BigDecimal;
 @Entity
 @Table(name = "recipes")
 @Getter
@@ -39,6 +40,9 @@ public class Recipe {
     private Integer cookingTimeMinutes;
 
     private String imageUrl;
+
+    @Column(name = "calories", precision = 10, scale = 2)
+    private BigDecimal calories;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
