@@ -57,7 +57,7 @@ public class CalculateCalories {
                         Long ingId = ing.getId();
                         if (ingId == null) continue;
 
-                        Optional<IngredientNutrition> calOpt = ingredientNutritionRepository.findFirstByIngredient_IdAndNutritionType_NameIgnoreCase(ingId, "calories");
+                        Optional<IngredientNutrition> calOpt = ingredientNutritionRepository.findFirstByIngredientIdAndNutritionTypeNameIgnoreCase(ingId, "calories");
                         if (calOpt.isEmpty()) continue;
 
                         IngredientNutrition calNut = calOpt.get();
