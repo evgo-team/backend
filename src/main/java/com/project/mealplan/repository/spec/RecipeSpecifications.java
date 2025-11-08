@@ -1,11 +1,6 @@
 package com.project.mealplan.repository.spec;
 
 import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -48,32 +43,13 @@ public final class RecipeSpecifications {
     public static Specification<Recipe> caloriesBetween(BigDecimal min, BigDecimal max) {
         return (root, query, cb) -> {
             if (min == null && max == null) return null;
-
-            Subquery<BigDecimal> sub = query.subquery(BigDecimal.class);
-            Root<Recipe> r2 = sub.correlate(root);
-
-            Join<?, ?> ri    = r2.join("ingredients", JoinType.LEFT);
-            Join<?, ?> ing   = ri.join("ingredient", JoinType.LEFT);
-            Join<?, ?> inut  = ing.join("nutritions", JoinType.LEFT);
-            Join<?, ?> ntype = inut.join("nutritionType", JoinType.LEFT);
-
-            // name = 'calories' (case-insensitive)
-            Predicate isCalories = cb.equal(cb.lower(ntype.get("name")), "calories");
-
-            // kcal/gram = amountPer100g * 0.01
-            Expression<BigDecimal> perGram = cb.prod(inut.get("amountPer100g"), new BigDecimal("0.01"));
-            // quantity (Double) * perGram
-            Expression<BigDecimal> term = cb.prod(cb.toBigDecimal(ri.get("quantity")), perGram);
-
-            sub.select(cb.sum(term));
-            sub.where(isCalories);
-
+            // Use stored calories field on recipe for filtering
             if (min != null && max != null) {
-                return cb.between(sub, min, max);
+                return cb.between(root.get("calories"), min, max);
             } else if (min != null) {
-                return cb.greaterThanOrEqualTo(sub, min);
+                return cb.greaterThanOrEqualTo(root.get("calories"), min);
             } else {
-                return cb.lessThanOrEqualTo(sub, max);
+                return cb.lessThanOrEqualTo(root.get("calories"), max);
             }
         };
     }

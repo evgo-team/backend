@@ -7,5 +7,6 @@ import com.project.mealplan.entity.IngredientNutrition;
 
 @Repository
 public interface IngredientNutritionRepository extends JpaRepository<IngredientNutrition, Long> {
-        
+	// Find a nutrition entry for a specific ingredient by nutrition type name (case-insensitive)
+	java.util.Optional<IngredientNutrition> findFirstByIngredientIdAndNutritionTypeNameIgnoreCase(Long ingredientId, String name);
 }
