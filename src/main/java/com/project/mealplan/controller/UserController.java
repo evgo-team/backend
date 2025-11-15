@@ -7,6 +7,7 @@ import com.project.mealplan.security.jwt.SecurityUtil;
 import com.project.mealplan.service.UserProfileService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
+@Tag(name = "User", description = "APIs for user operations")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserProfileService userProfileService;

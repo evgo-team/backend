@@ -4,6 +4,8 @@ import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.common.response.ApiResponse;
 import com.project.mealplan.common.response.PagePayLoad;
 import com.project.mealplan.config.CustomUserDetails;
+import com.project.mealplan.dtos.recipe.request.RecipeCreateRequest;
+import com.project.mealplan.dtos.recipe.request.UpdateRecipeDto;
 import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.security.CurrentUser;
@@ -11,6 +13,7 @@ import com.project.mealplan.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,17 +34,46 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/recipes")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Recipe", description = "Recipe APIs")
+@Tag(name = "Recipe", description = "Common APIs for recipes")
 @SecurityRequirement(name = "bearerAuth")
 public class RecipeController {
     private final RecipeService recipeService;
 
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Add recipe", description = "Add a new recipe with comprehensive validation")
+    public ResponseEntity<ApiResponse<RecipeResponseDto>> createRecipe(
+                    @Valid @RequestBody RecipeCreateRequest request,
+                    @AuthenticationPrincipal CustomUserDetails principal) {
+
+        Set<String> roles = principal.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+        CurrentUser cu = new CurrentUser(principal.getId(), roles);
+
+        RecipeResponseDto resp = recipeService.createRecipe(request, cu);
+
+        ApiResponse<RecipeResponseDto> response = new ApiResponse<>(
+                        HttpStatus.CREATED.value(),
+                        "Recipe created successfully",
+                        resp);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Get recipe by id")
-    public ResponseEntity<ApiResponse<RecipeResponseDto>> getRecipeById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<RecipeResponseDto>> getRecipeById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
-        RecipeResponseDto recipe = recipeService.getRecipeById(id);
+        Set<String> roles = principal.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+        CurrentUser cu = new CurrentUser(principal.getId(), roles);
+
+        RecipeResponseDto recipe = recipeService.getRecipeById(id, cu);
 
         return ResponseEntity.ok(ApiResponse.<RecipeResponseDto>builder()
                 .status(200)
@@ -71,14 +104,14 @@ public class RecipeController {
 
         CurrentUser cu = new CurrentUser(principal.getId(), roles);
         
-        if (cu.isUser() && status == RecipeStatus.DRAFT) {
-            return ResponseEntity.status(403).body(
-                ApiResponse.<PagePayLoad<RecipeShortResponse>>builder()
-                    .status(403)
-                    .message("Forbidden: Users cannot access DRAFT recipes")
-                    .build()
-            );
-        }
+        // if (cu.isUser() && status == RecipeStatus.DRAFT) {
+        //     return ResponseEntity.status(403).body(
+        //         ApiResponse.<PagePayLoad<RecipeShortResponse>>builder()
+        //             .status(403)
+        //             .message("Forbidden: Users cannot access DRAFT recipes")
+        //             .build()
+        //     );
+        // }
         
         Page<RecipeShortResponse> result = recipeService.getRecipes(cu, status, category, minCalories, maxCalories, page, size, sortBy, sortDir, keyword);
 
@@ -90,5 +123,48 @@ public class RecipeController {
                         .message("Recipes retrieved successfully")
                         .data(payload)
                         .build());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Update recipe by id")
+    public ResponseEntity<ApiResponse<RecipeResponseDto>> updateRecipe(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateRecipeDto dto,
+            @AuthenticationPrincipal CustomUserDetails principal) {
+
+        Set<String> roles = principal.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+        CurrentUser cu = new CurrentUser(principal.getId(), roles);
+
+        RecipeResponseDto updated = recipeService.updateRecipe(id, dto, cu);
+
+        return ResponseEntity.ok(ApiResponse.<RecipeResponseDto>builder()
+                .status(200)
+                .message("Recipe updated successfully")
+                .data(updated)
+                .build());
+    }
+    
+        
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Delete recipe by id")
+    public ResponseEntity<ApiResponse<Object>> deleteRecipe(
+        @PathVariable Long id, 
+        @AuthenticationPrincipal CustomUserDetails principal) {
+
+        Set<String> roles = principal.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+        CurrentUser cu = new CurrentUser(principal.getId(), roles);
+
+        recipeService.deleteRecipe(id, cu);
+
+        return ResponseEntity.ok(ApiResponse.<Object>builder()
+                .status(200)
+                .message("Xóa thành công")
+                .build());
     }
 }

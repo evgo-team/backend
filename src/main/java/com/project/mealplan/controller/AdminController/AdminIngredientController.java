@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/ingredients")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Admin Management", description = "APIs for admin management operations")
+@Tag(name = "Admin Management Ingredients", description = "APIs for admin management operations about ingredients")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminIngredientController {
 

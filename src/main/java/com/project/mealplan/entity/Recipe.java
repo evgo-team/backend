@@ -76,6 +76,9 @@ public class Recipe {
     )
     private Set<RecipeCategory> categories = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User createdBy;
 
     // Helper methods
     public void addIngredient(RecipeIngredient recipeIngredient) {

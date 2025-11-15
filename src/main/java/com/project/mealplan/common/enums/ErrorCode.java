@@ -27,11 +27,14 @@ public enum ErrorCode {
     INVALID_NUTRITION_AMOUNT(2004, HttpStatus.BAD_REQUEST, "Nutrition amount must be greater than 0"),
     INVALID_INGREDIENT_TYPE(2005, HttpStatus.BAD_REQUEST, "Invalid ingredient type"),
     INGREDIENT_IN_USE(2006, HttpStatus.CONFLICT, "Ingredient is being used and cannot be deleted"),
+    INVALID_INGREDIENT_UNIT(2007, HttpStatus.BAD_REQUEST, "Invalid ingredient unit"),
 
     // ====== RECIPE ======
     RECIPE_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "Recipe not found"),
     RECIPE_TITLE_ALREADY_EXISTS(3002, HttpStatus.CONFLICT, "Recipe title already exists"),
-    CATEGORY_NOT_FOUND(3003, HttpStatus.NOT_FOUND, "Category not found");
+    CATEGORY_NOT_FOUND(3003, HttpStatus.NOT_FOUND, "Category not found"),
+    CATEGORY_ALREADY_EXISTS(3004, HttpStatus.NOT_FOUND, "Recipe category with the same name already exists."),
+    CATEGORY_IN_USE(3005, HttpStatus.BAD_REQUEST, "Category is currently used in one or more recipes");
 
     private final int code;
     private final HttpStatus status;

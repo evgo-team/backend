@@ -733,6 +733,10 @@ public class DataInitializer {
 
                 System.out.println("🍳 Initializing recipe data...");
 
+                // Lấy admin
+                User admin = userRepository.findByEmail("admin@example.com")
+                                .orElseThrow(() -> new IllegalStateException("Admin user not found"));
+
                 // Lấy nguyên liệu
                 Ingredient chicken = ingredientRepository.findByNameIgnoreCase("Chicken Breast")
                                 .orElseThrow(() -> new IllegalStateException("Chicken not found"));
@@ -879,6 +883,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 1: Chicken Rice Bowl ----------------- */
                 Recipe chickenRice = new Recipe();
+                chickenRice.setCreatedBy(admin);
                 chickenRice.setTitle("Chicken Rice Bowl");
                 chickenRice.setDescription("A healthy and balanced meal with chicken, rice, and broccoli.");
                 chickenRice.setInstructions("""
@@ -901,6 +906,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 2: Broccoli Stir-Fry ----------------- */
                 Recipe broccoliStirFry = new Recipe();
+                broccoliStirFry.setCreatedBy(admin);
                 broccoliStirFry.setTitle("Broccoli Stir-Fry");
                 broccoliStirFry.setDescription("Simple vegetarian stir-fry with broccoli and rice.");
                 broccoliStirFry.setInstructions("""
@@ -921,6 +927,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 4: Spaghetti Bolognese ----------------- */
                 Recipe bolognese = new Recipe();
+                bolognese.setCreatedBy(admin);
                 bolognese.setTitle("Spaghetti Bolognese");
                 bolognese.setDescription("A classic Italian dish with a rich meat sauce.");
                 bolognese.setInstructions("""
@@ -948,6 +955,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 5: Simple Chicken Salad ----------------- */
                 Recipe chickenSalad = new Recipe();
+                chickenSalad.setCreatedBy(admin);
                 chickenSalad.setTitle("Simple Chicken Salad");
                 chickenSalad.setDescription("A light and healthy chicken salad.");
                 chickenSalad.setInstructions("""
@@ -973,6 +981,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 6: Roasted Vegetables ----------------- */
                 Recipe roastedVegs = new Recipe();
+                roastedVegs.setCreatedBy(admin);
                 roastedVegs.setTitle("Roasted Vegetables");
                 roastedVegs.setDescription("Simple and healthy roasted side dish.");
                 roastedVegs.setInstructions("""
@@ -998,6 +1007,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 7: Pho Bo (Pho) ----------------- */
                 Recipe phoBo = new Recipe();
+                phoBo.setCreatedBy(admin);
                 phoBo.setTitle("Phở Bò Hà Nội");
                 phoBo.setDescription("Món phở bò truyền thống với nước dùng trong, ngọt thanh.");
                 phoBo.setInstructions("""
@@ -1031,6 +1041,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe gaXaoSaOt = new Recipe();
+                gaXaoSaOt.setCreatedBy(admin);
                 gaXaoSaOt.setTitle("Gà xào sả ớt");
                 gaXaoSaOt.setDescription("Thịt gà mềm thơm, cay nồng vị sả ớt, đậm đà đưa cơm.");
                 gaXaoSaOt.setInstructions("""
@@ -1060,6 +1071,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe rauMuongXaoToi = new Recipe();
+                rauMuongXaoToi.setCreatedBy(admin);
                 rauMuongXaoToi.setTitle("Rau muống xào tỏi");
                 rauMuongXaoToi.setDescription("Món rau quốc dân, xanh giòn, thơm nức mùi tỏi.");
                 rauMuongXaoToi.setInstructions("""
@@ -1088,6 +1100,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe dauHuSotCa = new Recipe();
+                dauHuSotCa.setCreatedBy(admin);
                 dauHuSotCa.setTitle("Đậu hũ sốt cà chua");
                 dauHuSotCa.setDescription("Đậu hũ mềm béo trong nước sốt cà chua đậm đà, ăn cùng cơm trắng.");
                 dauHuSotCa.setInstructions("""
@@ -1116,6 +1129,7 @@ public class DataInitializer {
                  * ----------------- Recipe 11: Nem Ran (Fried Spring Rolls) -----------------
                  */
                 Recipe nemRan = new Recipe();
+                nemRan.setCreatedBy(admin);
                 nemRan.setTitle("Nem rán (Chả giò)");
                 nemRan.setDescription("Vỏ giòn rụm, nhân thịt và rau củ thơm lừng, chấm nước mắm chua ngọt.");
                 nemRan.setInstructions("""
@@ -1174,6 +1188,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe thitKho = new Recipe();
+                thitKho.setCreatedBy(admin);
                 thitKho.setTitle("Thịt kho trứng");
                 thitKho.setDescription("Món ăn ngày Tết cổ truyền, thịt ba rọi mềm rục, trứng thấm vị đậm đà.");
                 thitKho.setInstructions("""
@@ -1199,6 +1214,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 14: Bo Luc Lac (Shaking Beef) ----------------- */
                 Recipe boLucLac = new Recipe();
+                boLucLac.setCreatedBy(admin);
                 boLucLac.setTitle("Bò lúc lắc");
                 boLucLac.setDescription("Bò thăn thái hạt lựu, xào lửa lớn với hành tây, ớt chuông, ăn kèm salad.");
                 boLucLac.setInstructions("""
@@ -1229,6 +1245,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe canhChua = new Recipe();
+                canhChua.setCreatedBy(admin);
                 canhChua.setTitle("Canh chua cá lóc");
                 canhChua.setDescription(
                                 "Canh cá vị chua thanh từ me, ngọt từ dứa (dùng tạm cà chua), thơm mùi rau nêm.");
@@ -1260,6 +1277,7 @@ public class DataInitializer {
                  * ----------------- Recipe 16: Goi Cuon (Fresh Spring Rolls) -----------------
                  */
                 Recipe goiCuon = new Recipe();
+                goiCuon.setCreatedBy(admin);
                 goiCuon.setTitle("Gỏi cuốn tôm thịt");
                 goiCuon.setDescription("Món khai vị thanh mát, cuốn bánh tráng với bún, rau sống, tôm, thịt.");
                 goiCuon.setInstructions("""
@@ -1288,6 +1306,7 @@ public class DataInitializer {
 
                 // /* ----------------- Recipe 17: Bun Bo Hue ----------------- */
                 Recipe bunBoHue = new Recipe();
+                bunBoHue.setCreatedBy(admin);
                 bunBoHue.setTitle("Bún bò Huế");
                 bunBoHue.setDescription("Nước dùng đậm đà, cay nồng vị sả và mắm ruốc đặc trưng của Huế.");
                 bunBoHue.setInstructions(
@@ -1316,6 +1335,7 @@ public class DataInitializer {
 
                 // /* ----------------- Recipe 18: Com Tam Suon (Broken Rice) ----------------- */
                 Recipe comTam = new Recipe();
+                comTam.setCreatedBy(admin);
                 comTam.setTitle("Cơm tấm sườn nướng");
                 comTam.setDescription("Sườn cốt lết nướng mật ong thơm lừng, ăn kèm cơm tấm và nước mắm chua ngọt.");
                 comTam.setInstructions("""
@@ -1344,6 +1364,7 @@ public class DataInitializer {
                  * -----------------
                  */
                 Recipe supGaNgo = new Recipe();
+                supGaNgo.setCreatedBy(admin);
                 supGaNgo.setTitle("Súp gà ngô non");
                 supGaNgo.setDescription("Món súp khai vị thanh ngọt, sánh nhẹ, với gà xé và hạt ngô.");
                 supGaNgo.setInstructions("""
@@ -1371,6 +1392,7 @@ public class DataInitializer {
 
                 /* ----------------- Recipe 20: Banh Flan (Caramel Custard) ----------------- */
                 Recipe banhFlan = new Recipe();
+                banhFlan.setCreatedBy(admin);
                 banhFlan.setTitle("Bánh flan (Caramel Custard)");
                 banhFlan.setDescription("Món tráng miệng mềm mịn, béo ngậy vị trứng sữa, thơm lừng vị caramel.");
                 banhFlan.setInstructions("""

@@ -14,9 +14,12 @@ import com.project.mealplan.security.CurrentUser;
 import com.project.mealplan.dtos.recipe.DeleteRecipesDto;
 
 public interface RecipeService {
-    public RecipeResponseDto createRecipe(RecipeCreateRequest request);
-    RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto);
-    RecipeResponseDto getRecipeById(Long id);
+    public RecipeResponseDto createRecipe(RecipeCreateRequest request, CurrentUser currentUser);
+
+    RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto, CurrentUser currentUser);
+
+    RecipeResponseDto getRecipeById(Long id, CurrentUser currentUser);
+
     Page<RecipeShortResponse> getRecipes(
         CurrentUser currentUser,
         RecipeStatus status,
@@ -31,7 +34,7 @@ public interface RecipeService {
     );
 
     // Delete a recipe (and its related recipe_ingredient rows) by id. Admin only.
-    void deleteRecipe(Long id);
+    void deleteRecipe(Long id, CurrentUser currentUser);
     
     // Delete multiple recipes by their ids. Return the number of recipes actually deleted.
     // Non-existent ids are ignored. Operation should be performed in a transaction.

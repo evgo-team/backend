@@ -13,9 +13,11 @@ import com.project.mealplan.entity.Ingredient;
 import com.project.mealplan.entity.Recipe;
 import com.project.mealplan.entity.RecipeCategory;
 import com.project.mealplan.entity.RecipeIngredient;
+import com.project.mealplan.entity.User;
 import com.project.mealplan.repository.IngredientRepository;
 import com.project.mealplan.repository.RecipeCategoryRepository;
 import com.project.mealplan.repository.RecipeRepository;
+import com.project.mealplan.repository.UserRepository;
 import com.project.mealplan.repository.spec.RecipeSpecifications;
 import com.project.mealplan.security.CurrentUser;
 import com.project.mealplan.service.RecipeService;
@@ -40,10 +42,11 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
     private final RecipeCategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public RecipeResponseDto createRecipe(RecipeCreateRequest request) {
+    public RecipeResponseDto createRecipe(RecipeCreateRequest request, CurrentUser currentUser) {
         if (request.getStatus() == RecipeStatus.PUBLISHED) {
             boolean exists = recipeRepository.existsByTitleAndStatus(request.getTitle(), RecipeStatus.PUBLISHED);
             if (exists) {
@@ -51,15 +54,25 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
 
+        User author = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         Recipe recipe = new Recipe();
+        recipe.setCreatedBy(author);
         recipe.setTitle(request.getTitle());
         recipe.setDescription(request.getDescription());
         recipe.setInstructions(request.getInstructions());
         recipe.setCookingTimeMinutes(request.getCookingTimeMinutes());
         recipe.setImageUrl(request.getImageUrl());
-        recipe.setStatus(request.getStatus());
         recipe.setRole(request.getRole());
         recipe.setMealType(request.getMealType());
+
+        if (currentUser.isUser()) {
+            recipe.setStatus(RecipeStatus.DRAFT);
+        } else {
+            // ADMIN có thể set status từ request, nếu không set thì mặc định là DRAFT
+            recipe.setStatus(request.getStatus() != null ? request.getStatus() : RecipeStatus.DRAFT);
+        }
 
         // Gán category
         if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
@@ -91,9 +104,26 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto) {
+    public RecipeResponseDto updateRecipe(Long id, UpdateRecipeDto dto, CurrentUser currentUser) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
+
+        // Check permissions
+        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+
+        if (currentUser.isUser()) {
+            if (!isOwner) {
+                throw new AppException(ErrorCode.FORBIDDEN, "Bạn không có quyền sửa công thức này");
+            }
+            if (recipe.getStatus() != RecipeStatus.DRAFT) {
+                throw new AppException(ErrorCode.FORBIDDEN, "Bạn chỉ có thể sửa công thức khi ở trạng thái DRAFT");
+            }
+            // USER (owner, DRAFT) không được phép đổi status.
+            if (dto.getStatus() != null && dto.getStatus() != RecipeStatus.DRAFT) {
+                 throw new AppException(ErrorCode.VALIDATION_ERROR, "Bạn không có quyền thay đổi trạng thái của công thức.");
+            }
+        }
+
 
         boolean changed = false;
 
@@ -104,8 +134,6 @@ public class RecipeServiceImpl implements RecipeService {
         } catch (Exception ex) {
             throw new AppException(ErrorCode.VALIDATION_ERROR, "Invalid recipe status");
         }
-
-        
 
         // Title required (DTO validation should enforce), check uniqueness when publishing
         if (dto.getTitle() != null && !dto.getTitle().equals(recipe.getTitle())) {
@@ -144,16 +172,15 @@ public class RecipeServiceImpl implements RecipeService {
             changed = true;
         }
 
-        if (newStatus != null && newStatus != recipe.getStatus()) {
-            // If switching to PUBLISHED, ensure title uniqueness
-            if (newStatus == RecipeStatus.PUBLISHED) {
+        // Status (ONLY ADMIN)
+        if (currentUser.isAdmin() && dto.getStatus() != null && dto.getStatus() != recipe.getStatus()) {
+            if (dto.getStatus() == RecipeStatus.PUBLISHED) {
                 boolean exists = recipeRepository.existsByTitleAndStatus(recipe.getTitle(), RecipeStatus.PUBLISHED);
-                // If title already used by another published recipe
                 if (exists && (recipe.getTitle() == null || !recipe.getTitle().equals(dto.getTitle()))) {
                     throw new AppException(ErrorCode.RECIPE_TITLE_ALREADY_EXISTS);
                 }
             }
-            recipe.setStatus(newStatus);
+            recipe.setStatus(dto.getStatus());
             changed = true;
         }
 
@@ -232,6 +259,7 @@ public class RecipeServiceImpl implements RecipeService {
         dto.setStatus(recipe.getStatus() != null ? recipe.getStatus() : null);
         dto.setRole(recipe.getRole() != null ? recipe.getRole() : null);
         dto.setMealType(recipe.getMealType() != null ? recipe.getMealType() : null);
+        dto.setCreatedBy(recipe.getCreatedBy().getFullName());
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
 
@@ -258,20 +286,40 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeResponseDto getRecipeById(Long id) {
+    public RecipeResponseDto getRecipeById(Long id, CurrentUser currentUser) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
-        return convertToDto(recipe);
+        // ADMIN được xem mọi recipe
+        if (currentUser.isAdmin()) {
+            return convertToDto(recipe);
+        }
+
+        // USER: Được xem nếu recipe là PUBLISHED
+        if (recipe.getStatus() == RecipeStatus.PUBLISHED) {
+            return convertToDto(recipe);
+        }
+
+        // USER: Được xem nếu là recipe của mình (kể cả DRAFT)
+        if (recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId())) {
+            return convertToDto(recipe);
+        }
+
+        // Nếu không rơi vào các trường hợp trên -> FORBIDDEN
+        throw new AppException(ErrorCode.FORBIDDEN, "You do not have permission to view this recipe");
     }
 
     @Override
     @Transactional
-    public void deleteRecipe(Long id) {
+    public void deleteRecipe(Long id, CurrentUser currentUser) {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
-        // Deleting recipe will cascade to recipe_ingredient due to CascadeType.ALL and orphanRemoval=true
+        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+
+        if (currentUser.isUser() && !isOwner) {
+            throw new AppException(ErrorCode.FORBIDDEN, "Bạn không có quyền xóa công thức này");
+        }
         recipeRepository.delete(recipe);
     }
 
@@ -316,8 +364,7 @@ public class RecipeServiceImpl implements RecipeService {
 
         PageRequest pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction, sortField));
 
-        boolean isAdmin = (currentUser != null && currentUser.isAdmin());
-        Specification<Recipe> spec = RecipeSpecifications.isPublicOnlyForUser(isAdmin)
+        Specification<Recipe> spec = RecipeSpecifications.isPublicOnlyForUser(currentUser)
                 .and(RecipeSpecifications.hasStatus(status))
                 .and(RecipeSpecifications.hasCategory(category))
                 .and(RecipeSpecifications.keywordLike(keyword))
