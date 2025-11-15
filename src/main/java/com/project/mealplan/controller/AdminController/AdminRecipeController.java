@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/recipes")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Recipe", description = "Recipe APIs")
+@Tag(name = "Admin Management Recipes", description = "APIs for admin management operations about recipe")
 @SecurityRequirement(name = "bearerAuth")
 public class AdminRecipeController {
     private final RecipeService recipeService;

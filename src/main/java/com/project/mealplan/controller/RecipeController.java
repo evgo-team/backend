@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/recipes")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Recipe", description = "Recipe APIs")
+@Tag(name = "Recipe", description = "Common APIs for recipes")
 @SecurityRequirement(name = "bearerAuth")
 public class RecipeController {
     private final RecipeService recipeService;

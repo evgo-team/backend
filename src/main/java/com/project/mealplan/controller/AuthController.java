@@ -3,6 +3,8 @@ package com.project.mealplan.controller;
 import com.project.mealplan.dtos.auth.request.UserRegistrationRequest;
 import com.project.mealplan.common.response.ApiResponse;
 import com.project.mealplan.service.UserService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,7 @@ import org.springframework.http.HttpStatus;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication and Authorization", description = "APIs for authenticateion and authorization")
 public class AuthController {
 
     private final AuthService authService;
