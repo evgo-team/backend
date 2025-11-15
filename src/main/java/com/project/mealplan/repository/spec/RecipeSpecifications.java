@@ -1,11 +1,14 @@
 package com.project.mealplan.repository.spec;
 
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Join;
 
 import org.springframework.data.jpa.domain.Specification;
 
 import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.entity.Recipe;
+import com.project.mealplan.security.CurrentUser;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -14,9 +17,18 @@ public final class RecipeSpecifications {
 
     private RecipeSpecifications() {}
 
-    public static Specification<Recipe> isPublicOnlyForUser(boolean isAdmin) {
-        if (isAdmin) return (root, query, cb) -> cb.conjunction(); 
-        return (root, query, cb) -> cb.equal(root.get("status"), RecipeStatus.PUBLISHED);
+    public static Specification<Recipe> isPublicOnlyForUser(CurrentUser currentUser) {
+        // ADMIN: Thấy tất cả
+        if (currentUser.isAdmin()) {
+            return (root, query, cb) -> cb.conjunction();
+        }
+
+        // USER: Thấy (status = PUBLISHED) HOẶC (mình là tác giả 'createdBy')
+        return (root, query, cb) -> {
+            Predicate isPublished = cb.equal(root.get("status"), RecipeStatus.PUBLISHED);
+            Predicate isOwner = cb.equal(root.get("createdBy").get("userId"), currentUser.getId()); 
+            return cb.or(isPublished, isOwner);
+        };
     }
 
     public static Specification<Recipe> hasStatus(RecipeStatus status) {
@@ -24,9 +36,18 @@ public final class RecipeSpecifications {
     }
 
     public static Specification<Recipe> hasCategory(String category) {
-        return (root, query, cb) -> category == null || category.isBlank()
-                ? null
-                : cb.like(cb.lower(root.get("category")), "%" + category.trim().toLowerCase(Locale.ROOT) + "%");
+        return (root, query, cb) -> {
+            if (category == null || category.isBlank()) {
+                return null;
+            }
+
+            Join<Object, Object> categoryJoin = root.join("categories");
+
+            return cb.like(
+                cb.lower(categoryJoin.get("name")),
+                "%" + category.trim().toLowerCase(Locale.ROOT) + "%"
+            );
+        };
     }
 
     // title OR description, case-insensitive

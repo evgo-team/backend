@@ -29,6 +29,7 @@ public class RecipeResponseDto {
     private MealType mealType;
     private Set<String> categories; 
     private List<IngredientInfo> ingredients;
+    private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
