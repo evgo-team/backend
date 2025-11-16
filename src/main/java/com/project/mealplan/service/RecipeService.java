@@ -12,6 +12,7 @@ import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.security.CurrentUser;
 import com.project.mealplan.dtos.recipe.DeleteRecipesDto;
+import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
 
 public interface RecipeService {
     public RecipeResponseDto createRecipe(RecipeCreateRequest request, CurrentUser currentUser);
@@ -32,6 +33,8 @@ public interface RecipeService {
         String sortDir,
         String keyword
     );
+    
+    RecipeResponseDto updateRecipeStatus(Long id, UpdateRecipeStatus status, CurrentUser currentUser);
 
     // Delete a recipe (and its related recipe_ingredient rows) by id. Admin only.
     void deleteRecipe(Long id, CurrentUser currentUser);

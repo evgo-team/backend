@@ -6,6 +6,7 @@ import com.project.mealplan.common.exception.AppException;
 import com.project.mealplan.dtos.recipe.request.RecipeCreateRequest;
 import com.project.mealplan.dtos.recipe.request.RecipeIngredientRequest;
 import com.project.mealplan.dtos.recipe.request.UpdateRecipeDto;
+import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
 import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.dtos.recipe.DeleteRecipesDto;
@@ -383,5 +384,53 @@ public class RecipeServiceImpl implements RecipeService {
                 r.getCalories()
         ));
     }
-    
+
+    @Override
+    public RecipeResponseDto updateRecipeStatus(Long id, UpdateRecipeStatus status, CurrentUser currentUser) {
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
+
+        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+
+        RecipeStatus targetStatus = status != null ? status.getStatus() : null;
+        if (targetStatus == null) {
+            throw new AppException(ErrorCode.VALIDATION_ERROR, "Status is required");
+        }
+
+        if (currentUser.isUser()) {
+            if (!isOwner) {
+                throw new AppException(ErrorCode.FORBIDDEN, "You do not have permission to update the status of this recipe");
+            }
+            if (recipe.getStatus() == RecipeStatus.DRAFT && targetStatus != RecipeStatus.PENDING) {
+                throw new AppException(ErrorCode.FORBIDDEN, "User can only change status from DRAFT to PENDING");
+            }
+            if (recipe.getStatus() == RecipeStatus.PENDING && targetStatus != RecipeStatus.DRAFT) {
+                throw new AppException(ErrorCode.FORBIDDEN, "User can only change status from PENDING to DRAFT");
+            }
+            if (recipe.getStatus() != RecipeStatus.DRAFT && recipe.getStatus() != RecipeStatus.PENDING) {
+                throw new AppException(ErrorCode.FORBIDDEN, "User cannot change status from the current state");
+            }
+        } else if (currentUser.isAdmin()) {
+            if (recipe.getStatus() != RecipeStatus.PENDING) {
+                throw new AppException(ErrorCode.VALIDATION_ERROR, "Admin can only change status when recipe is PENDING");
+            }
+            if (targetStatus != RecipeStatus.DRAFT && targetStatus != RecipeStatus.PUBLISHED) {
+                throw new AppException(ErrorCode.VALIDATION_ERROR, "Admin can only set status to DRAFT or PUBLISHED");
+            }
+
+            if (targetStatus == RecipeStatus.PUBLISHED) {
+                boolean exists = recipeRepository.existsByTitleAndStatus(recipe.getTitle(), RecipeStatus.PUBLISHED);
+                if (exists) {
+                    throw new AppException(ErrorCode.RECIPE_TITLE_ALREADY_EXISTS);
+                }
+            }
+        } else {
+            throw new AppException(ErrorCode.FORBIDDEN, "Unsupported role");
+        }
+
+        recipe.setStatus(targetStatus);
+        recipe = recipeRepository.save(recipe);
+
+        return convertToDto(recipe);
+    }
 }

@@ -6,6 +6,7 @@ import com.project.mealplan.common.response.PagePayLoad;
 import com.project.mealplan.config.CustomUserDetails;
 import com.project.mealplan.dtos.recipe.request.RecipeCreateRequest;
 import com.project.mealplan.dtos.recipe.request.UpdateRecipeDto;
+import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
 import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.security.CurrentUser;
@@ -167,4 +168,27 @@ public class RecipeController {
                 .message("Xóa thành công")
                 .build());
     }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Update recipe status to PENDING or DRAFT by id")
+    public ResponseEntity<ApiResponse<RecipeResponseDto>> updateRecipeStatus(
+            @PathVariable Long id,
+            @RequestBody UpdateRecipeStatus status,
+            @AuthenticationPrincipal CustomUserDetails principal) {
+
+        Set<String> roles = principal.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+        CurrentUser cu = new CurrentUser(principal.getId(), roles);
+
+        RecipeResponseDto updated = recipeService.updateRecipeStatus(id, status, cu);
+
+        return ResponseEntity.ok(ApiResponse.<RecipeResponseDto>builder()
+                .status(200)
+                .message("Recipe status updated successfully")
+                .data(updated)
+                .build());
+    }
+
 }
