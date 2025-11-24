@@ -354,8 +354,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Page<RecipeShortResponse> getRecipes(CurrentUser currentUser, RecipeStatus status, String category,
-        BigDecimal minCalories, BigDecimal maxCalories,
-        Integer page, Integer size, String sortBy, String sortDir, String keyword) {
+            String mealType, Integer minCookingTimeMinutes, Integer maxCookingTimeMinutes,
+            BigDecimal minCalories, BigDecimal maxCalories,
+            Integer page, Integer size, String sortBy, String sortDir, String keyword) {
+
+        List<Long> ingredientIds = Collections.emptyList();
 
         String sortField = (sortBy == null || sortBy.isBlank()) ? "title" : sortBy.trim();
 
@@ -365,24 +368,56 @@ public class RecipeServiceImpl implements RecipeService {
 
         PageRequest pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction, sortField));
 
+        // ===== Base filters =====
         Specification<Recipe> spec = RecipeSpecifications.isPublicOnlyForUser(currentUser)
                 .and(RecipeSpecifications.hasStatus(status))
                 .and(RecipeSpecifications.hasCategory(category))
-                .and(RecipeSpecifications.keywordLike(keyword))
+                .and(RecipeSpecifications.hasMealType(mealType))
+                .and(RecipeSpecifications.cookingTimeBetween(minCookingTimeMinutes, maxCookingTimeMinutes))
                 .and(RecipeSpecifications.caloriesBetween(minCalories, maxCalories));
 
-        Page<Recipe> result = recipeRepository.findAll(spec, pageable);                
-        
+        // ===== Keyword search (title/description) =====
+        Specification<Recipe> keywordTextSpec = RecipeSpecifications.keywordLike(keyword);
+
+        // ===== Keyword search (ingredient name → ingredientIds → recipe.ingredients)
+        // =====
+        Specification<Recipe> ingredientSpec = null;
+
+        if (keyword != null && !keyword.isBlank()) {
+
+            List<Ingredient> ingredients = ingredientRepository.findTop20ByNameContainingIgnoreCase(keyword.trim());
+
+            ingredientIds = ingredients.stream()
+                    .map(Ingredient::getId)
+                    .toList();
+
+            if (!ingredientIds.isEmpty()) {
+                ingredientSpec = RecipeSpecifications.hasAnyIngredientIds(ingredientIds);
+            }
+        }
+
+        // ===== Merge search spec =====
+        if (keywordTextSpec != null && ingredientSpec != null) {
+            spec = spec.and(keywordTextSpec.or(ingredientSpec));
+        } else if (keywordTextSpec != null) {
+            spec = spec.and(keywordTextSpec);
+        } else if (ingredientSpec != null) {
+            spec = spec.and(ingredientSpec);
+        }
+
+        Page<Recipe> result = recipeRepository.findAll(spec, pageable);
+
         // map đúng kiểu Page
         return result.map(r -> new RecipeShortResponse(
-                r.getRecipeId(),                 
+                r.getRecipeId(),
                 r.getTitle(),
+                r.getImageUrl(),
                 r.getStatus(),
                 r.getCategories().stream()
-                    .map(RecipeCategory::getName)
-                    .collect(Collectors.toSet()),
-                r.getCalories()
-        ));
+                        .map(RecipeCategory::getName)
+                        .collect(Collectors.toSet()),
+                r.getCookingTimeMinutes(),
+                r.getCalories()));
     }
 
     @Override

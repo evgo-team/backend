@@ -91,6 +91,9 @@ public class RecipeController {
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestParam(required = false) RecipeStatus status,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) Integer minCookingTimeMinutes,
+            @RequestParam(required = false) Integer maxCookingTimeMinutes,
+            @RequestParam(required = false) String mealType,
             @RequestParam(required = false) BigDecimal minCalories,
             @RequestParam(required = false) BigDecimal maxCalories,
             @RequestParam(required = false, defaultValue = "title") String sortBy,
@@ -105,16 +108,7 @@ public class RecipeController {
 
         CurrentUser cu = new CurrentUser(principal.getId(), roles);
         
-        // if (cu.isUser() && status == RecipeStatus.DRAFT) {
-        //     return ResponseEntity.status(403).body(
-        //         ApiResponse.<PagePayLoad<RecipeShortResponse>>builder()
-        //             .status(403)
-        //             .message("Forbidden: Users cannot access DRAFT recipes")
-        //             .build()
-        //     );
-        // }
-        
-        Page<RecipeShortResponse> result = recipeService.getRecipes(cu, status, category, minCalories, maxCalories, page, size, sortBy, sortDir, keyword);
+        Page<RecipeShortResponse> result = recipeService.getRecipes(cu, status, category, mealType, minCookingTimeMinutes, maxCookingTimeMinutes, minCalories, maxCalories, page, size, sortBy, sortDir, keyword);
 
         PagePayLoad<RecipeShortResponse> payload = PagePayLoad.of(result);
 

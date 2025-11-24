@@ -1,6 +1,5 @@
 package com.project.mealplan.controller.AdminController;
 
-import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.common.response.ApiResponse;
 import com.project.mealplan.dtos.recipe.DeleteRecipesDto;
 import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
