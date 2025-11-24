@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.project.mealplan.entity.Ingredient;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.lang.Nullable;
 
@@ -34,4 +35,6 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long>, J
         @Override
         @EntityGraph(value = "Ingredient.withNutritions")
         Page<Ingredient> findAll(@Nullable Specification<Ingredient> spec, Pageable pageable);
+
+        List<Ingredient> findTop20ByNameContainingIgnoreCase(String name);
 }
