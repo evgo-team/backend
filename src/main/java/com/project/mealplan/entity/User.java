@@ -88,6 +88,10 @@ public class User {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "favorites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "recipe_id"))
+  private Set<Recipe> favorites = new HashSet<>();
+
   @ToString.Exclude
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

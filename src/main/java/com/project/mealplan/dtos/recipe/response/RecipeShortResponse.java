@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 public record RecipeShortResponse(
     Long recipeId,
     String title,
+    String imageUrl,
     RecipeStatus status,
     Set<String> categories,
+    Integer cookingTimeMinutes,
     BigDecimal calories
 ) {}

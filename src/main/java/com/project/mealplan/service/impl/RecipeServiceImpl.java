@@ -377,10 +377,12 @@ public class RecipeServiceImpl implements RecipeService {
         return result.map(r -> new RecipeShortResponse(
                 r.getRecipeId(),                 
                 r.getTitle(),
+                r.getImageUrl(),
                 r.getStatus(),
                 r.getCategories().stream()
                     .map(RecipeCategory::getName)
                     .collect(Collectors.toSet()),
+                r.getCookingTimeMinutes(),
                 r.getCalories()
         ));
     }

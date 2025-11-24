@@ -34,7 +34,11 @@ public enum ErrorCode {
     RECIPE_TITLE_ALREADY_EXISTS(3002, HttpStatus.CONFLICT, "Recipe title already exists"),
     CATEGORY_NOT_FOUND(3003, HttpStatus.NOT_FOUND, "Category not found"),
     CATEGORY_ALREADY_EXISTS(3004, HttpStatus.NOT_FOUND, "Recipe category with the same name already exists."),
-    CATEGORY_IN_USE(3005, HttpStatus.BAD_REQUEST, "Category is currently used in one or more recipes");
+    CATEGORY_IN_USE(3005, HttpStatus.BAD_REQUEST, "Category is currently used in one or more recipes"),
+
+     // ======= FAVORITE ======
+    FAVORITE_NOT_FOUND(4001, HttpStatus.NOT_FOUND, "Favorite not found"),
+    FAVORITE_ALREADY_EXISTS(4002, HttpStatus.CONFLICT, "Favorite already exists");
 
     private final int code;
     private final HttpStatus status;
