@@ -14,18 +14,19 @@ public class IngredientResponseConverter {
     public IngredientResponse convert(Ingredient ingredient) {
         List<NutritionInIngredient> nutritionResponses = ingredient.getNutritions().stream()
                 .map(n -> new NutritionInIngredient(
-                    n.getNutritionType().getId(),
-                    n.getNutritionType().getName(),
-                    n.getAmountPer100g(),
-                    n.getNutritionType().getUnit().name()
+                        n.getNutritionType().getId(),
+                        n.getNutritionType().getName(),
+                        n.getAmountPer100g(),
+                        n.getNutritionType().getUnit().name()
                 ))
                 .toList();
 
         return new IngredientResponse(
-            ingredient.getId(),
-            ingredient.getName(),
-            ingredient.getType().name(),
-            nutritionResponses
+                ingredient.getId(),
+                ingredient.getName(),
+                ingredient.getType().name(),
+                ingredient.getDensity(),
+                nutritionResponses
         );
     }
 

@@ -1,6 +1,7 @@
 package com.project.mealplan.service.impl;
 
 import com.project.mealplan.common.enums.ErrorCode;
+import com.project.mealplan.common.enums.IngredientUnit;
 import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.common.exception.AppException;
 import com.project.mealplan.dtos.recipe.request.RecipeCreateRequest;
@@ -89,10 +90,18 @@ public class RecipeServiceImpl implements RecipeService {
             for (RecipeIngredientRequest ingReq : request.getIngredients()) {
                 Ingredient ingredient = ingredientRepository.findById(ingReq.getIngredientId())
                         .orElseThrow(() -> new AppException(ErrorCode.INGREDIENT_NOT_FOUND));
+
+                IngredientUnit unit;
+                try {
+                    unit = IngredientUnit.valueOf(ingReq.getUnit().trim().toUpperCase());
+                } catch (Exception e) {
+                    throw new AppException(ErrorCode.INVALID_INGREDIENT_UNIT);
+                }
+
                 RecipeIngredient ri = new RecipeIngredient();
                 ri.setIngredient(ingredient);
                 ri.setQuantity(ingReq.getQuantity());
-                ri.setUnit(ingReq.getUnit());
+                ri.setUnit(unit);
                 recipe.addIngredient(ri);
             }
         }
@@ -207,11 +216,19 @@ public class RecipeServiceImpl implements RecipeService {
 
                 incomingIds.add(entry.getIngredientId());
 
+                IngredientUnit unit;
+                try {
+                    unit = IngredientUnit.valueOf(entry.getUnit().trim().toUpperCase());
+                } catch (Exception e) {
+                    throw new AppException(ErrorCode.INVALID_INGREDIENT_UNIT);
+                }
+
                 if (existingMap.containsKey(entry.getIngredientId())) {
                     RecipeIngredient existing = existingMap.get(entry.getIngredientId());
-                    if (!Objects.equals(existing.getQuantity(), entry.getQuantity()) || !Objects.equals(existing.getUnit(), entry.getUnit())) {
+                    if (!Objects.equals(existing.getQuantity(), entry.getQuantity())
+                            || !Objects.equals(existing.getUnit(), unit)) {
                         existing.setQuantity(entry.getQuantity());
-                        existing.setUnit(entry.getUnit());
+                        existing.setUnit(unit);
                         changed = true;
                     }
                 } else {
@@ -219,7 +236,7 @@ public class RecipeServiceImpl implements RecipeService {
                     RecipeIngredient newRi = new RecipeIngredient();
                     newRi.setIngredient(ing);
                     newRi.setQuantity(entry.getQuantity());
-                    newRi.setUnit(entry.getUnit());
+                    newRi.setUnit(unit);
                     recipe.addIngredient(newRi);
                     changed = true;
                 }

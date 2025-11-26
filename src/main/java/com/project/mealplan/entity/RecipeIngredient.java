@@ -1,5 +1,6 @@
 package com.project.mealplan.entity;
 
+import com.project.mealplan.common.enums.IngredientUnit;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,7 +34,7 @@ public class RecipeIngredient {
 
     private Double quantity;
 
-    private String unit;
+    private IngredientUnit unit;
 
     @Override
     public boolean equals(Object o) {

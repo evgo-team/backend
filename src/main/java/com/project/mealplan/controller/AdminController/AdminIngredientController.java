@@ -151,29 +151,5 @@ public class AdminIngredientController {
                                                 .data(data)
                                                 .build());
         }
-        
-        @Operation(summary = "Search & list ingredients with filters/pagination")
-        @GetMapping("")
-        @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<ApiResponse<PagePayLoad<IngredientListItemResponse>>> listIngredients(
-                        @RequestParam(required = false) String type,
-                        @RequestParam(required = false) BigDecimal minCalories,
-                        @RequestParam(required = false) BigDecimal maxCalories,
-                        @RequestParam(required = false, defaultValue = "name") String sortBy,
-                        @RequestParam(required = false, defaultValue = "asc") String sortDir,
-                        @RequestParam(required = false, defaultValue = "0") Integer page,
-                        @RequestParam(required = false, defaultValue = "10") Integer size,
-                        @RequestParam(required = false) String keyword) {
-                Page<IngredientListItemResponse> result = ingredientService.searchIngredients(
-                                type, minCalories, maxCalories, keyword, page, size, sortBy, sortDir);
 
-                PagePayLoad<IngredientListItemResponse> payload = PagePayLoad.of(result);
-
-                return ResponseEntity.ok(
-                                ApiResponse.<PagePayLoad<IngredientListItemResponse>>builder()
-                                                .status(200)
-                                                .message("Ingredients retrieved successfully")
-                                                .data(payload)
-                                                .build());
-        }
 }

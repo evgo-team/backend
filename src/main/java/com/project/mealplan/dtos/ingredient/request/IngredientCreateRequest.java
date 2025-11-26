@@ -12,6 +12,10 @@ public record IngredientCreateRequest(
     @NotBlank(message = "Loại nguyên liệu không được để trống")
     String type,
 
+    @NotNull(message = "Density không được để trống")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Density phải lớn hơn 0")
+    BigDecimal density,
+
     @NotEmpty(message = "Phải có ít nhất 1 thông tin dinh dưỡng")
     @Valid
     List<NutritionDto> nutritions
