@@ -1,5 +1,5 @@
-
 package com.project.mealplan.common.util;
+
 import com.project.mealplan.entity.Recipe;
 import com.project.mealplan.entity.Ingredient;
 import com.project.mealplan.entity.IngredientNutrition;
@@ -11,68 +11,66 @@ import java.util.Optional;
 
 public class CalculateCalories {
 
-        // This version accesses Ingredient.nutritions directly and thus requires an open persistence
-        // session (works when called inside a @Transactional service method).
-        public static BigDecimal computeRecipeCalories(Recipe recipe) {
-                if (recipe == null || recipe.getIngredients() == null) return BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
+    // This version accesses Ingredient.nutritions directly and thus requires an open persistence
+    // session (works when called inside a @Transactional service method).
+    public static BigDecimal computeRecipeCalories(Recipe recipe) {
+        if (recipe == null || recipe.getIngredients() == null)
+            return BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
 
-                BigDecimal total = BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
 
-                for (RecipeIngredient ri : recipe.getIngredients()) {
-                        if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
-                        Ingredient ing = ri.getIngredient();
+        for (RecipeIngredient ri : recipe.getIngredients()) {
+            if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
+            Ingredient ing = ri.getIngredient();
 
-                        // find calories nutrition for ingredient from in-memory collection (requires session)
-                        IngredientNutrition calNut = ing.getNutritions().stream()
-                                        .filter(n -> n.getNutritionType() != null && n.getNutritionType().getName() != null)
-                                        .filter(n -> "calories".equalsIgnoreCase(n.getNutritionType().getName()))
-                                        .filter(n -> n.getAmountPer100g() != null)
-                                        .findFirst()
-                                        .orElse(null);
+            // find calories nutrition for ingredient from in-memory collection (requires session)
+            IngredientNutrition calNut = ing.getNutritions().stream().filter(n -> n.getNutritionType() != null && n.getNutritionType().getName() != null).filter(n -> "calories".equalsIgnoreCase(n.getNutritionType().getName())).filter(n -> n.getAmountPer100g() != null).findFirst().orElse(null);
 
-                        if (calNut == null) continue;
+            if (calNut == null) continue;
 
-                        BigDecimal amountPer100g = calNut.getAmountPer100g();
-                        BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
+            BigDecimal amountPer100g = calNut.getAmountPer100g();
+            BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
 
-                        BigDecimal quantity = BigDecimal.valueOf(ri.getQuantity());
+            BigDecimal quantity = UnitConverter.toGram(BigDecimal.valueOf(ri.getQuantity()), ri.getUnit(), ri.getIngredient().getDensity());
 
-                        BigDecimal term = quantity.multiply(perGram);
-                        total = total.add(term);
-                }
 
-                return total.setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal term = quantity.multiply(perGram);
+            total = total.add(term);
         }
 
-        // Repository-backed version: safe to call outside of a persistence session (e.g. during
-        // application initialization). It queries IngredientNutrition directly to avoid lazy init.
-        public static BigDecimal computeRecipeCalories(Recipe recipe, IngredientNutritionRepository ingredientNutritionRepository) {
-                if (recipe == null || recipe.getIngredients() == null) return BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
+        return total.setScale(2, java.math.RoundingMode.HALF_UP);
+    }
 
-                BigDecimal total = BigDecimal.ZERO;
+    // Repository-backed version: safe to call outside of a persistence session (e.g. during
+    // application initialization). It queries IngredientNutrition directly to avoid lazy init.
+    public static BigDecimal computeRecipeCalories(Recipe recipe, IngredientNutritionRepository ingredientNutritionRepository) {
+        if (recipe == null || recipe.getIngredients() == null)
+            return BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
 
-                for (RecipeIngredient ri : recipe.getIngredients()) {
-                        if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
-                        Ingredient ing = ri.getIngredient();
-                        Long ingId = ing.getId();
-                        if (ingId == null) continue;
+        BigDecimal total = BigDecimal.ZERO;
 
-                        Optional<IngredientNutrition> calOpt = ingredientNutritionRepository.findFirstByIngredientIdAndNutritionTypeNameIgnoreCase(ingId, "calories");
-                        if (calOpt.isEmpty()) continue;
+        for (RecipeIngredient ri : recipe.getIngredients()) {
+            if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
+            Ingredient ing = ri.getIngredient();
+            Long ingId = ing.getId();
+            if (ingId == null) continue;
 
-                        IngredientNutrition calNut = calOpt.get();
-                        if (calNut.getAmountPer100g() == null) continue;
+            Optional<IngredientNutrition> calOpt = ingredientNutritionRepository.findFirstByIngredientIdAndNutritionTypeNameIgnoreCase(ingId, "calories");
+            if (calOpt.isEmpty()) continue;
 
-                        BigDecimal amountPer100g = calNut.getAmountPer100g();
-                        BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
+            IngredientNutrition calNut = calOpt.get();
+            if (calNut.getAmountPer100g() == null) continue;
 
-                        BigDecimal quantity = BigDecimal.valueOf(ri.getQuantity());
+            BigDecimal amountPer100g = calNut.getAmountPer100g();
+            BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
 
-                        BigDecimal term = quantity.multiply(perGram);
-                        total = total.add(term);
-                }
+            BigDecimal quantity = UnitConverter.toGram(BigDecimal.valueOf(ri.getQuantity()), ri.getUnit(), ri.getIngredient().getDensity());
 
-                return total.setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal term = quantity.multiply(perGram);
+            total = total.add(term);
         }
+
+        return total.setScale(2, java.math.RoundingMode.HALF_UP);
+    }
 
 }

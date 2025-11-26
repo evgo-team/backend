@@ -1,5 +1,6 @@
 package com.project.mealplan.dtos.recipe.response;
 
+import com.project.mealplan.common.enums.IngredientUnit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,6 @@ public class RecipeResponseDto {
         private Long ingredientId;
         private String ingredientName;
         private Double quantity;
-        private String unit;
+        private IngredientUnit unit;
     }
 }

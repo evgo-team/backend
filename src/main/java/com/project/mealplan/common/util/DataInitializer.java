@@ -1,17 +1,12 @@
 package com.project.mealplan.common.util;
 
+import com.project.mealplan.common.enums.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.project.mealplan.common.enums.IngredientType;
-import com.project.mealplan.common.enums.MealRole;
-import com.project.mealplan.common.enums.MealType;
-import com.project.mealplan.common.enums.NutritionUnit;
-import com.project.mealplan.common.enums.RecipeStatus;
-import com.project.mealplan.common.enums.UserStatus;
 import com.project.mealplan.entity.Ingredient;
 import com.project.mealplan.entity.IngredientNutrition;
 import com.project.mealplan.entity.NutritionType;
@@ -375,8 +370,28 @@ public class DataInitializer {
                 chiliOil.setName("Chili Oil"); // Sa tế / Dầu ớt
                 chiliOil.setType(IngredientType.SEASONING);
 
+                oliveOil.setDensity(BigDecimal.valueOf(0.91));        // g/ml
+                vegetableOil.setDensity(BigDecimal.valueOf(0.92));
+                butter.setDensity(BigDecimal.valueOf(0.96));          // melted butter
 
-                // ===== Lưu tất cả nguyên liệu =====
+                fishSauce.setDensity(BigDecimal.valueOf(1.10));
+                soySauce.setDensity(BigDecimal.valueOf(1.10));
+                oysterSauce.setDensity(BigDecimal.valueOf(1.24));
+                shrimpPaste.setDensity(BigDecimal.valueOf(1.30));
+
+                coconutWater.setDensity(BigDecimal.valueOf(1.03));
+                milk.setDensity(BigDecimal.valueOf(1.03));
+                condensedMilk.setDensity(BigDecimal.valueOf(1.31));
+
+                honey.setDensity(BigDecimal.valueOf(1.42));
+                tamarindPaste.setDensity(BigDecimal.valueOf(1.10));
+                chiliOil.setDensity(BigDecimal.valueOf(0.92));
+
+                vanillaExtract.setDensity(BigDecimal.valueOf(0.90));
+
+
+
+            // ===== Lưu tất cả nguyên liệu =====
                 ingredientRepository.saveAll(List.of(
                                 chicken, rice, broccoli, carrot, groundBeef, tomato, oliveOil, onion,
                                 garlic, potato, salmon, egg, milk, flour, sugar, salt, lemon, lettuce, cheese, butter,
@@ -900,9 +915,9 @@ public class DataInitializer {
                 chickenRice.getCategories().add(asianCat);
                 chickenRice.getCategories().add(healthyCat);
 
-                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, chicken, 150.0, "g"));
-                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, rice, 200.0, "g"));
-                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, broccoli, 100.0, "g"));
+                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, chicken, 150.0, IngredientUnit.G));
+                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, rice, 200.0, IngredientUnit.G));
+                chickenRice.addIngredient(new RecipeIngredient(null, chickenRice, broccoli, 100.0, IngredientUnit.G));
 
                 /* ----------------- Recipe 2: Broccoli Stir-Fry ----------------- */
                 Recipe broccoliStirFry = new Recipe();
@@ -922,8 +937,8 @@ public class DataInitializer {
                 broccoliStirFry.getCategories().add(asianCat);
                 broccoliStirFry.getCategories().add(vegCat);
 
-                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, broccoli, 200.0, "g"));
-                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, rice, 150.0, "g"));
+                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, broccoli, 200.0, IngredientUnit.G));
+                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, rice, 150.0, IngredientUnit.G));
 
                 /* ----------------- Recipe 4: Spaghetti Bolognese ----------------- */
                 Recipe bolognese = new Recipe();
@@ -945,12 +960,12 @@ public class DataInitializer {
                 bolognese.getCategories().add(italianCat);
 
                 // Thêm nguyên liệu cho món này
-                bolognese.addIngredient(new RecipeIngredient(null, bolognese, groundBeef, 250.0, "g"));
-                bolognese.addIngredient(new RecipeIngredient(null, bolognese, tomato, 400.0, "g"));
-                bolognese.addIngredient(new RecipeIngredient(null, bolognese, onion, 100.0, "g"));
-                bolognese.addIngredient(new RecipeIngredient(null, bolognese, oliveOil, 15.0, "ml"));
+                bolognese.addIngredient(new RecipeIngredient(null, bolognese, groundBeef, 250.0, IngredientUnit.G));
+                bolognese.addIngredient(new RecipeIngredient(null, bolognese, tomato, 400.0, IngredientUnit.G));
+                bolognese.addIngredient(new RecipeIngredient(null, bolognese, onion, 100.0, IngredientUnit.G));
+                bolognese.addIngredient(new RecipeIngredient(null, bolognese, oliveOil, 15.0, IngredientUnit.ML));
                 // Giả sử dùng "Rice" thay cho "Pasta" để demo
-                bolognese.addIngredient(new RecipeIngredient(null, bolognese, rice, 150.0, "g"));
+                bolognese.addIngredient(new RecipeIngredient(null, bolognese, rice, 150.0, IngredientUnit.G));
 
 
                 /* ----------------- Recipe 5: Simple Chicken Salad ----------------- */
@@ -974,10 +989,10 @@ public class DataInitializer {
                 chickenSalad.getCategories().add(quickCat);
 
                 // Thêm nguyên liệu cho món này
-                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, chicken, 150.0, "g"));
-                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, broccoli, 100.0, "g"));
-                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, carrot, 50.0, "g"));
-                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, oliveOil, 10.0, "ml"));
+                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, chicken, 150.0, IngredientUnit.G));
+                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, broccoli, 100.0, IngredientUnit.G));
+                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, carrot, 50.0, IngredientUnit.G));
+                chickenSalad.addIngredient(new RecipeIngredient(null, chickenSalad, oliveOil, 10.0, IngredientUnit.ML));
 
                 /* ----------------- Recipe 6: Roasted Vegetables ----------------- */
                 Recipe roastedVegs = new Recipe();
@@ -1000,10 +1015,10 @@ public class DataInitializer {
                 roastedVegs.getCategories().add(quickCat);
 
                 // Thêm nguyên liệu cho món này
-                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, broccoli, 200.0, "g"));
-                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, carrot, 100.0, "g"));
-                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, onion, 50.0, "g"));
-                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, oliveOil, 15.0, "ml"));
+                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, broccoli, 200.0, IngredientUnit.G));
+                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, carrot, 100.0, IngredientUnit.G));
+                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, onion, 50.0, IngredientUnit.G));
+                roastedVegs.addIngredient(new RecipeIngredient(null, roastedVegs, oliveOil, 15.0, IngredientUnit.ML));
 
                 /* ----------------- Recipe 7: Pho Bo (Pho) ----------------- */
                 Recipe phoBo = new Recipe();
@@ -1025,16 +1040,16 @@ public class DataInitializer {
                 phoBo.getCategories().add(vietnameseCat);
                 phoBo.getCategories().add(asianCat);
 
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, beefShank, 200.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, riceNoodles, 150.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, onion, 50.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, ginger, 10.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, starAnise, 2.0, "unit"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, cinnamonStick, 1.0, "stick"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, greenOnion, 10.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, cilantro, 5.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, beanSprouts, 30.0, "g"));
-                phoBo.addIngredient(new RecipeIngredient(null, phoBo, fishSauce, 15.0, "ml"));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, beefShank, 200.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, riceNoodles, 150.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, onion, 50.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, ginger, 10.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, starAnise, 2.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, cinnamonStick, 3.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, greenOnion, 10.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, cilantro, 5.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, beanSprouts, 30.0, IngredientUnit.G));
+                phoBo.addIngredient(new RecipeIngredient(null, phoBo, fishSauce, 15.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 8: Ga Xao Sa Ot (Lemongrass Chicken)
@@ -1058,13 +1073,13 @@ public class DataInitializer {
                 gaXaoSaOt.getCategories().add(vietnameseCat);
                 gaXaoSaOt.getCategories().add(quickCat);
 
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, chicken, 200.0, "g"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, lemongrass, 30.0, "g"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, chili, 10.0, "g"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, garlic, 5.0, "g"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, fishSauce, 15.0, "ml"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, sugar, 5.0, "g"));
-                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, vegetableOil, 10.0, "ml"));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, chicken, 200.0, IngredientUnit.G));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, lemongrass, 30.0, IngredientUnit.G));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, chili, 10.0, IngredientUnit.G));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, garlic, 5.0, IngredientUnit.G));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, fishSauce, 15.0, IngredientUnit.ML));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, sugar, 5.0, IngredientUnit.G));
+                gaXaoSaOt.addIngredient(new RecipeIngredient(null, gaXaoSaOt, vegetableOil, 10.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 9: Rau Muong Xao Toi (Stir-fried Water Spinach)
@@ -1090,10 +1105,10 @@ public class DataInitializer {
                 rauMuongXaoToi.getCategories().add(quickCat);
                 rauMuongXaoToi.getCategories().add(vegCat);
 
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, waterSpinach, 300.0, "g"));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, garlic, 15.0, "g"));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, fishSauce, 10.0, "ml"));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, vegetableOil, 15.0, "ml"));
+                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, waterSpinach, 300.0, IngredientUnit.G));
+                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, garlic, 15.0, IngredientUnit.G));
+                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, fishSauce, 10.0, IngredientUnit.ML));
+                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, vegetableOil, 15.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 10: Dau Hu Sot Ca (Tofu in Tomato Sauce)
@@ -1118,12 +1133,12 @@ public class DataInitializer {
                 dauHuSotCa.getCategories().add(vietnameseCat);
                 dauHuSotCa.getCategories().add(vegCat);
 
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, tofu, 200.0, "g"));
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, tomato, 150.0, "g"));
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, greenOnion, 10.0, "g"));
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, cilantro, 5.0, "g"));
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, fishSauce, 10.0, "ml"));
-                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, vegetableOil, 20.0, "ml"));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, tofu, 200.0, IngredientUnit.G));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, tomato, 150.0, IngredientUnit.G));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, greenOnion, 10.0, IngredientUnit.G));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, cilantro, 5.0, IngredientUnit.G));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, fishSauce, 10.0, IngredientUnit.ML));
+                dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, vegetableOil, 20.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 11: Nem Ran (Fried Spring Rolls) -----------------
@@ -1146,14 +1161,14 @@ public class DataInitializer {
                 nemRan.getCategories().add(vietnameseCat);
                 nemRan.getCategories().add(appetizerCat);
 
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, groundPork, 200.0, "g"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, ricePaper, 10.0, "sheet"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, egg, 1.0, "unit"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, carrot, 50.0, "g"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, woodEarMushroom, 20.0, "g"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, beanSprouts, 30.0, "g"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, fishSauce, 10.0, "ml"));
-                nemRan.addIngredient(new RecipeIngredient(null, nemRan, vegetableOil, 100.0, "ml"));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, groundPork, 200.0, IngredientUnit.G));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, ricePaper, 700.0, IngredientUnit.G));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, egg, 1.0, IngredientUnit.EGG_PIECE));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, carrot, 50.0, IngredientUnit.G));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, woodEarMushroom, 20.0, IngredientUnit.G));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, beanSprouts, 30.0, IngredientUnit.G));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, fishSauce, 10.0, IngredientUnit.ML));
+                nemRan.addIngredient(new RecipeIngredient(null, nemRan, vegetableOil, 100.0, IngredientUnit.ML));
 
                 Recipe comChien = new Recipe();
                 comChien.setTitle("Cơm chiên Dương Châu");
@@ -1175,13 +1190,13 @@ public class DataInitializer {
                 comChien.getCategories().add(asianCat);
                 comChien.getCategories().add(quickCat);
 
-                comChien.addIngredient(new RecipeIngredient(null, comChien, rice, 200.0, "g"));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, egg, 2.0, "unit"));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, carrot, 30.0, "g"));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, peas, 30.0, "g"));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, groundPork, 50.0, "g")); // Dùng tạm
-                comChien.addIngredient(new RecipeIngredient(null, comChien, soySauce, 15.0, "ml"));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, greenOnion, 10.0, "g"));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, rice, 200.0, IngredientUnit.G));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, egg, 2.0, IngredientUnit.EGG_PIECE));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, carrot, 30.0, IngredientUnit.G));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, peas, 30.0, IngredientUnit.G));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, groundPork, 50.0, IngredientUnit.G)); // Dùng tạm
+                comChien.addIngredient(new RecipeIngredient(null, comChien, soySauce, 15.0, IngredientUnit.ML));
+                comChien.addIngredient(new RecipeIngredient(null, comChien, greenOnion, 10.0, IngredientUnit.G));
 
                 /*
                  * ----------------- Recipe 13: Thit Kho Trung (Braised Pork with Eggs)
@@ -1205,12 +1220,12 @@ public class DataInitializer {
                 thitKho.setMealType(MealType.DINNER);
                 thitKho.getCategories().add(vietnameseCat);
 
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, porkBelly, 300.0, "g"));
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, egg, 4.0, "unit"));
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, coconutWater, 200.0, "ml"));
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, fishSauce, 30.0, "ml"));
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, sugar, 20.0, "g"));
-                thitKho.addIngredient(new RecipeIngredient(null, thitKho, garlic, 10.0, "g"));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, porkBelly, 300.0, IngredientUnit.G));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, egg, 4.0, IngredientUnit.EGG_PIECE));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, coconutWater, 200.0, IngredientUnit.ML));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, fishSauce, 30.0, IngredientUnit.ML));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, sugar, 20.0, IngredientUnit.G));
+                thitKho.addIngredient(new RecipeIngredient(null, thitKho, garlic, 10.0, IngredientUnit.G));
 
                 /* ----------------- Recipe 14: Bo Luc Lac (Shaking Beef) ----------------- */
                 Recipe boLucLac = new Recipe();
@@ -1232,13 +1247,13 @@ public class DataInitializer {
                 boLucLac.getCategories().add(vietnameseCat);
                 boLucLac.getCategories().add(quickCat);
 
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, beefSirloin, 200.0, "g"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, onion, 50.0, "g"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, lettuce, 100.0, "g"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, tomato, 50.0, "g"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, soySauce, 15.0, "ml"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, oysterSauce, 10.0, "ml"));
-                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, garlic, 10.0, "g"));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, beefSirloin, 200.0, IngredientUnit.G));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, onion, 50.0, IngredientUnit.G));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, lettuce, 100.0, IngredientUnit.G));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, tomato, 50.0, IngredientUnit.G));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, soySauce, 15.0, IngredientUnit.ML));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, oysterSauce, 10.0, IngredientUnit.ML));
+                boLucLac.addIngredient(new RecipeIngredient(null, boLucLac, garlic, 10.0, IngredientUnit.G));
 
                 /*
                  * ----------------- Recipe 15: Canh Chua Ca (Vietnamese Sour Fish Soup)
@@ -1265,13 +1280,13 @@ public class DataInitializer {
                 canhChua.getCategories().add(vietnameseCat);
                 canhChua.getCategories().add(soupCat);
 
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, catfish, 200.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, tamarindPaste, 30.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, tomato, 100.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, beanSprouts, 50.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, okra, 50.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, cilantro, 10.0, "g"));
-                canhChua.addIngredient(new RecipeIngredient(null, canhChua, fishSauce, 20.0, "ml"));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, catfish, 200.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, tamarindPaste, 30.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, tomato, 100.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, beanSprouts, 50.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, okra, 50.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, cilantro, 10.0, IngredientUnit.G));
+                canhChua.addIngredient(new RecipeIngredient(null, canhChua, fishSauce, 20.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 16: Goi Cuon (Fresh Spring Rolls) -----------------
@@ -1296,13 +1311,13 @@ public class DataInitializer {
                 goiCuon.getCategories().add(appetizerCat);
                 goiCuon.getCategories().add(healthyCat);
 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, shrimp, 100.0, "g"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, porkBelly, 100.0, "g"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, ricePaper, 10.0, "sheet"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, riceNoodles, 100.0, "g"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, lettuce, 50.0, "g"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, cilantro, 20.0, "g"));
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, peanuts, 30.0, "g")); // Cho nước chấm
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, shrimp, 100.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, porkBelly, 100.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, ricePaper, 500.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, riceNoodles, 100.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, lettuce, 50.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, cilantro, 20.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, peanuts, 30.0, IngredientUnit.G)); // Cho nước chấm
 
                 // /* ----------------- Recipe 17: Bun Bo Hue ----------------- */
                 Recipe bunBoHue = new Recipe();
@@ -1325,13 +1340,13 @@ public class DataInitializer {
                 bunBoHue.getCategories().add(vietnameseCat);
                 bunBoHue.getCategories().add(soupCat);
 
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, thickRiceNoodles, 150.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, beefShank, 100.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, porkHock, 100.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, lemongrass, 50.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, shrimpPaste, 10.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, chiliOil, 5.0, "g"));
-                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, fishSauce, 15.0, "ml"));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, thickRiceNoodles, 150.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, beefShank, 100.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, porkHock, 100.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, lemongrass, 50.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, shrimpPaste, 10.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, chiliOil, 5.0, IngredientUnit.G));
+                bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, fishSauce, 15.0, IngredientUnit.ML));
 
                 // /* ----------------- Recipe 18: Com Tam Suon (Broken Rice) ----------------- */
                 Recipe comTam = new Recipe();
@@ -1352,12 +1367,12 @@ public class DataInitializer {
                 comTam.setMealType(MealType.LUNCH);
                 comTam.getCategories().add(vietnameseCat);
 
-                comTam.addIngredient(new RecipeIngredient(null, comTam, porkChop, 150.0, "g"));
-                comTam.addIngredient(new RecipeIngredient(null, comTam, brokenRice, 150.0, "g"));
-                comTam.addIngredient(new RecipeIngredient(null, comTam, fishSauce, 20.0, "ml"));
-                comTam.addIngredient(new RecipeIngredient(null, comTam, honey, 10.0, "g"));
-                comTam.addIngredient(new RecipeIngredient(null, comTam, garlic, 5.0, "g"));
-                comTam.addIngredient(new RecipeIngredient(null, comTam, greenOnion, 10.0, "g"));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, porkChop, 150.0, IngredientUnit.G));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, brokenRice, 150.0, IngredientUnit.G));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, fishSauce, 20.0, IngredientUnit.ML));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, honey, 10.0, IngredientUnit.G));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, garlic, 5.0, IngredientUnit.G));
+                comTam.addIngredient(new RecipeIngredient(null, comTam, greenOnion, 10.0, IngredientUnit.G));
 
                 /*
                  * ----------------- Recipe 19: Sup Ga Ngo Non (Chicken Corn Soup)
@@ -1384,11 +1399,11 @@ public class DataInitializer {
                 supGaNgo.getCategories().add(appetizerCat);
                 supGaNgo.getCategories().add(asianCat);
 
-                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, chicken, 100.0, "g"));
-                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, sweetCorn, 100.0, "g"));
-                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, egg, 1.0, "unit"));
-                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, cornstarch, 15.0, "g"));
-                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, cilantro, 5.0, "g"));
+                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, chicken, 100.0, IngredientUnit.G));
+                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, sweetCorn, 100.0, IngredientUnit.G));
+                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, egg, 1.0, IngredientUnit.EGG_PIECE));
+                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, cornstarch, 15.0, IngredientUnit.G));
+                supGaNgo.addIngredient(new RecipeIngredient(null, supGaNgo, cilantro, 5.0, IngredientUnit.G));
 
                 /* ----------------- Recipe 20: Banh Flan (Caramel Custard) ----------------- */
                 Recipe banhFlan = new Recipe();
@@ -1411,11 +1426,11 @@ public class DataInitializer {
                 banhFlan.setMealType(MealType.SNACK);
                 banhFlan.getCategories().add(dessertCat);
 
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, egg, 4.0, "unit"));
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, milk, 300.0, "ml"));
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, condensedMilk, 100.0, "g"));
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, sugar, 50.0, "g")); // Để làm caramel
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, vanillaExtract, 5.0, "ml"));
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, egg, 4.0, IngredientUnit.EGG_PIECE));
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, milk, 300.0, IngredientUnit.ML));
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, condensedMilk, 100.0, IngredientUnit.G));
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, sugar, 50.0, IngredientUnit.G)); // Để làm caramel
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, vanillaExtract, 5.0, IngredientUnit.ML));
 
                 /* ----------------- CẬP NHẬT Save all (TỔNG 20 MÓN) ----------------- */
                 // Calculate calories for each recipe based on its ingredients and ingredient
@@ -1425,7 +1440,7 @@ public class DataInitializer {
                                 phoBo, gaXaoSaOt, rauMuongXaoToi, dauHuSotCa, nemRan,
                                 comChien, thitKho, boLucLac, canhChua, goiCuon,
                                 bunBoHue, comTam, supGaNgo, banhFlan);
-                
+
                 for (Recipe rx : recipesToSave) {
                         try {
                                 BigDecimal cal = CalculateCalories.computeRecipeCalories(rx, ingredientNutritionRepository);

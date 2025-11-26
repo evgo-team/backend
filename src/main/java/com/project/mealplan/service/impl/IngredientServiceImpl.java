@@ -64,6 +64,7 @@ public class IngredientServiceImpl implements IngredientService {
                 Ingredient ingredient = new Ingredient();
                 ingredient.setName(name);
                 ingredient.setType(type);
+                ingredient.setDensity(req.density());
 
                 // For each nutrition entry: validate nutrition type exists and amount > 0
                 Set<IngredientNutrition> nutritionSet = new HashSet<>();
