@@ -1,14 +1,11 @@
 package com.project.mealplan.controller.AdminController;
-import org.springframework.data.domain.Page;
 
 import com.project.mealplan.common.response.ApiResponse;
-import com.project.mealplan.common.response.PagePayLoad;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientDto;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientResponseDto;
 import com.project.mealplan.dtos.admin.IngredientResponseDto;
 import com.project.mealplan.dtos.admin.UpdateIngredientDto;
 import com.project.mealplan.dtos.ingredient.request.IngredientCreateRequest;
-import com.project.mealplan.dtos.ingredient.response.IngredientListItemResponse;
 import com.project.mealplan.dtos.ingredient.response.IngredientResponse;
 import com.project.mealplan.service.IngredientService;
 
@@ -20,8 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.math.BigDecimal;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

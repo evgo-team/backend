@@ -36,9 +36,14 @@ public enum ErrorCode {
     CATEGORY_ALREADY_EXISTS(3004, HttpStatus.NOT_FOUND, "Recipe category with the same name already exists."),
     CATEGORY_IN_USE(3005, HttpStatus.BAD_REQUEST, "Category is currently used in one or more recipes"),
 
-     // ======= FAVORITE ======
+    // ======= FAVORITE ======
     FAVORITE_NOT_FOUND(4001, HttpStatus.NOT_FOUND, "Favorite not found"),
-    FAVORITE_ALREADY_EXISTS(4002, HttpStatus.CONFLICT, "Favorite already exists");
+    FAVORITE_ALREADY_EXISTS(4002, HttpStatus.CONFLICT, "Favorite already exists"),
+
+    // ======== PANTRY ========
+    PANTRY_ITEM_NOT_FOUND(5001, HttpStatus.NOT_FOUND, "Pantry item not found"),
+    UNAUTHORIZED_ACCESS_PANTRY(5002, HttpStatus.FORBIDDEN, "You do not have permission to access this pantry item"),
+    ;
 
     private final int code;
     private final HttpStatus status;
