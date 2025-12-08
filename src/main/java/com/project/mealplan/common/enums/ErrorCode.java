@@ -27,9 +27,30 @@ public enum ErrorCode {
     INVALID_NUTRITION_AMOUNT(2004, HttpStatus.BAD_REQUEST, "Nutrition amount must be greater than 0"),
     INVALID_INGREDIENT_TYPE(2005, HttpStatus.BAD_REQUEST, "Invalid ingredient type"),
     INGREDIENT_IN_USE(2006, HttpStatus.CONFLICT, "Ingredient is being used and cannot be deleted"),
+    INVALID_INGREDIENT_UNIT(2007, HttpStatus.BAD_REQUEST, "Invalid ingredient unit"),
 
     // ====== RECIPE ======
-    RECIPE_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "Recipe not found");
+    RECIPE_NOT_FOUND(3001, HttpStatus.NOT_FOUND, "Recipe not found"),
+    RECIPE_TITLE_ALREADY_EXISTS(3002, HttpStatus.CONFLICT, "Recipe title already exists"),
+    CATEGORY_NOT_FOUND(3003, HttpStatus.NOT_FOUND, "Category not found"),
+    CATEGORY_ALREADY_EXISTS(3004, HttpStatus.NOT_FOUND, "Recipe category with the same name already exists."),
+    CATEGORY_IN_USE(3005, HttpStatus.BAD_REQUEST, "Category is currently used in one or more recipes"),
+
+    // ======= FAVORITE ======
+    FAVORITE_NOT_FOUND(4001, HttpStatus.NOT_FOUND, "Favorite not found"),
+    FAVORITE_ALREADY_EXISTS(4002, HttpStatus.CONFLICT, "Favorite already exists"),
+
+    // ======== PANTRY ========
+    PANTRY_ITEM_NOT_FOUND(5001, HttpStatus.NOT_FOUND, "Pantry item not found"),
+    UNAUTHORIZED_ACCESS_PANTRY(5002, HttpStatus.FORBIDDEN, "You do not have permission to access this pantry item"),
+
+    // ====== MEAL PLAN ======
+    MEAL_PLAN_NOT_FOUND(6001, HttpStatus.NOT_FOUND, "Meal plan not found"),
+    MEAL_PLAN_ALREADY_EXISTS(6002, HttpStatus.CONFLICT, "Meal plan already exists for this week"),
+    INVALID_DATE_FORMAT(6003, HttpStatus.BAD_REQUEST, "Invalid date format. Expected yyyy-MM-dd"),
+    INSUFFICIENT_USER_PROFILE(6004, HttpStatus.BAD_REQUEST,
+            "User profile incomplete. Weight, height, age required for meal planning"),
+    NO_RECIPES_AVAILABLE(6005, HttpStatus.BAD_REQUEST, "No recipes available for meal planning");
 
     private final int code;
     private final HttpStatus status;

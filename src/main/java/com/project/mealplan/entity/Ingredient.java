@@ -1,5 +1,6 @@
 package com.project.mealplan.entity;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import com.project.mealplan.common.enums.IngredientType;
@@ -41,6 +42,9 @@ public class Ingredient {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private IngredientType type;
+
+    @Column(nullable = false)
+    private BigDecimal density = BigDecimal.ONE; // gram per 1 ml
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<IngredientNutrition> nutritions = new HashSet<>();

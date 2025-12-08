@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ingredient_nutrition")
+@Table(
+    name = "ingredient_nutrition",
+    uniqueConstraints = @UniqueConstraint(columnNames = { "ingredient_id", "nutrition_type_id" })
+)
 public class IngredientNutrition {
 
     @Id
@@ -43,17 +47,25 @@ public class IngredientNutrition {
     // Custom equals and hashCode to avoid circular reference
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
         IngredientNutrition that = (IngredientNutrition) o;
-        return Objects.equals(id, that.id);
+
+        boolean ingredientEquals = (this.ingredient != null) ?
+            this.ingredient.equals(that.ingredient) :
+            (that.ingredient == null);
+
+        boolean nutritionTypeEquals = (this.nutritionType != null) ?
+            this.nutritionType.equals(that.nutritionType) :
+            (that.nutritionType == null);
+            
+        return ingredientEquals && nutritionTypeEquals;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(ingredient, nutritionType);
     }
 
     @Override

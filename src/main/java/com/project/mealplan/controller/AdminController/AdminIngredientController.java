@@ -1,13 +1,11 @@
-package com.project.mealplan.controller;
+package com.project.mealplan.controller.AdminController;
 
 import com.project.mealplan.common.response.ApiResponse;
-import com.project.mealplan.common.response.PagePayLoad;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientDto;
 import com.project.mealplan.dtos.admin.BulkDeleteIngredientResponseDto;
 import com.project.mealplan.dtos.admin.IngredientResponseDto;
 import com.project.mealplan.dtos.admin.UpdateIngredientDto;
 import com.project.mealplan.dtos.ingredient.request.IngredientCreateRequest;
-import com.project.mealplan.dtos.ingredient.response.IngredientListItemResponse;
 import com.project.mealplan.dtos.ingredient.response.IngredientResponse;
 import com.project.mealplan.service.IngredientService;
 
@@ -20,25 +18,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/ingredients")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Admin Management", description = "APIs for admin management operations")
+@Tag(name = "Admin Management Ingredients", description = "APIs for admin management operations about ingredients")
 @SecurityRequirement(name = "bearerAuth")
-public class AdminController {
+public class AdminIngredientController {
 
         private final IngredientService ingredientService;
 
-        @PostMapping("/ingredients")
+        @PostMapping
         @PreAuthorize("hasRole('ADMIN')")
         @Operation(summary = "Add ingredient", description = "Add a new ingredient with comprehensive validation")
         public ResponseEntity<ApiResponse<IngredientResponse>> createIngredient(
@@ -54,7 +50,7 @@ public class AdminController {
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
 
-        @PutMapping("/ingredients/{id}")
+        @PutMapping("/{id}")
         @PreAuthorize("hasRole('ADMIN')")
         @Operation(summary = "Update ingredient", description = "Update an existing ingredient with comprehensive validation")
         @ApiResponses(value = {
@@ -69,7 +65,7 @@ public class AdminController {
 
                 log.info("Admin updating ingredient with ID: {}", id);
                 log.debug("Update data: {}", updateDto);
-                
+
                 IngredientResponseDto updatedIngredient = ingredientService.updateIngredient(id, updateDto);
 
                 return ResponseEntity.ok(ApiResponse.<IngredientResponseDto>builder()
@@ -79,7 +75,7 @@ public class AdminController {
                                 .build());
         }
 
-        @DeleteMapping("/ingredients/{id}")
+        @DeleteMapping("/{id}")
         @PreAuthorize("hasRole('ADMIN')")
         @Operation(summary = "Delete ingredient", description = "Delete an existing ingredient and all its nutrition data")
         @ApiResponses(value = {
@@ -102,7 +98,7 @@ public class AdminController {
                                 .build());
         }
 
-        @DeleteMapping("/ingredients")
+        @DeleteMapping
         @PreAuthorize("hasRole('ADMIN')")
         @Operation(summary = "Bulk delete ingredients", description = "Delete multiple ingredients by IDs in a single transaction")
         @ApiResponses(value = {
@@ -136,7 +132,7 @@ public class AdminController {
         }
 
         @Operation(summary = "Get ingredient detail by ID")
-        @GetMapping("/ingredients/{id}")
+        @GetMapping("/{id}")
         @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<IngredientResponse>> getIngredientById(
                         @PathVariable Long id) {
@@ -151,28 +147,4 @@ public class AdminController {
                                                 .build());
         }
 
-        @Operation(summary = "Search & list ingredients with filters/pagination")
-        @GetMapping("/ingredients")
-        @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<ApiResponse<PagePayLoad<IngredientListItemResponse>>> listIngredients(
-                        @RequestParam(required = false) String type,
-                        @RequestParam(required = false) BigDecimal minCalories,
-                        @RequestParam(required = false) BigDecimal maxCalories,
-                        @RequestParam(required = false, defaultValue = "name") String sortBy,
-                        @RequestParam(required = false, defaultValue = "asc") String sortDir,
-                        @RequestParam(required = false, defaultValue = "0") Integer page,
-                        @RequestParam(required = false, defaultValue = "10") Integer size,
-                        @RequestParam(required = false) String keyword) {
-                Page<IngredientListItemResponse> result = ingredientService.searchIngredients(
-                                type, minCalories, maxCalories, keyword, page, size, sortBy, sortDir);
-
-                PagePayLoad<IngredientListItemResponse> payload = PagePayLoad.of(result);
-
-                return ResponseEntity.ok(
-                                ApiResponse.<PagePayLoad<IngredientListItemResponse>>builder()
-                                                .status(200)
-                                                .message("Ingredients retrieved successfully")
-                                                .data(payload)
-                                                .build());
-        }
 }
