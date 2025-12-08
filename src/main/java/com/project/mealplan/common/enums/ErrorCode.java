@@ -43,7 +43,14 @@ public enum ErrorCode {
     // ======== PANTRY ========
     PANTRY_ITEM_NOT_FOUND(5001, HttpStatus.NOT_FOUND, "Pantry item not found"),
     UNAUTHORIZED_ACCESS_PANTRY(5002, HttpStatus.FORBIDDEN, "You do not have permission to access this pantry item"),
-    ;
+
+    // ====== MEAL PLAN ======
+    MEAL_PLAN_NOT_FOUND(6001, HttpStatus.NOT_FOUND, "Meal plan not found"),
+    MEAL_PLAN_ALREADY_EXISTS(6002, HttpStatus.CONFLICT, "Meal plan already exists for this week"),
+    INVALID_DATE_FORMAT(6003, HttpStatus.BAD_REQUEST, "Invalid date format. Expected yyyy-MM-dd"),
+    INSUFFICIENT_USER_PROFILE(6004, HttpStatus.BAD_REQUEST,
+            "User profile incomplete. Weight, height, age required for meal planning"),
+    NO_RECIPES_AVAILABLE(6005, HttpStatus.BAD_REQUEST, "No recipes available for meal planning");
 
     private final int code;
     private final HttpStatus status;
