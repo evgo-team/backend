@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.mealplan.common.enums.ErrorCode;
 import com.project.mealplan.common.exception.AppException;
-import com.project.mealplan.dtos.PantryItemRequest;
-import com.project.mealplan.dtos.PantryItemResponse;
+import com.project.mealplan.dtos.pantry.request.PantryItemRequest;
+import com.project.mealplan.dtos.pantry.response.PantryItemResponse;
 import com.project.mealplan.entity.Ingredient;
 import com.project.mealplan.entity.Pantry;
 import com.project.mealplan.entity.PantryItem;

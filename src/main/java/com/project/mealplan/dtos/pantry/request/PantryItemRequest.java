@@ -1,4 +1,4 @@
-package com.project.mealplan.dtos;
+package com.project.mealplan.dtos.pantry.request;
 
 import java.time.LocalDate;
 

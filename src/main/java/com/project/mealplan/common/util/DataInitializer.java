@@ -731,7 +731,13 @@ public class DataInitializer {
                                 new RecipeCategory(null, "Quick & Easy"),
                                 new RecipeCategory(null, "Vietnamese"),
                                 new RecipeCategory(null, "Appetizer"),
-                                new RecipeCategory(null, "Soup"));
+                                new RecipeCategory(null, "Soup"),
+                                new RecipeCategory(null, "Seafood"),
+                                new RecipeCategory(null, "High Protein"),
+                                new RecipeCategory(null, "Noodles"),
+                                new RecipeCategory(null, "Grilled"),
+                                new RecipeCategory(null, "Fried"),
+                                new RecipeCategory(null, "Spicy"));
                 recipeCategoryRepository.saveAll(cats);
                 System.out.println("Recipe categories initialized.");
         }
@@ -892,6 +898,18 @@ public class DataInitializer {
                                 .orElseThrow(() -> new IllegalStateException("Soup category not found"));
                 RecipeCategory dessertCat = recipeCategoryRepository.findByNameIgnoreCase("Dessert")
                                 .orElseThrow(() -> new IllegalStateException("Dessert category not found"));
+                RecipeCategory seafoodCat = recipeCategoryRepository.findByNameIgnoreCase("Seafood")
+                                .orElseThrow(() -> new IllegalStateException("Seafood category not found"));
+                RecipeCategory highProteinCat = recipeCategoryRepository.findByNameIgnoreCase("High Protein")
+                                .orElseThrow(() -> new IllegalStateException("High Protein category not found"));
+                RecipeCategory noodlesCat = recipeCategoryRepository.findByNameIgnoreCase("Noodles")
+                                .orElseThrow(() -> new IllegalStateException("Noodles category not found"));
+                RecipeCategory grilledCat = recipeCategoryRepository.findByNameIgnoreCase("Grilled")
+                                .orElseThrow(() -> new IllegalStateException("Grilled category not found"));
+                RecipeCategory friedCat = recipeCategoryRepository.findByNameIgnoreCase("Fried")
+                                .orElseThrow(() -> new IllegalStateException("Fried category not found"));
+                RecipeCategory spicyCat = recipeCategoryRepository.findByNameIgnoreCase("Spicy")
+                                .orElseThrow(() -> new IllegalStateException("Spicy category not found"));
 
                 /* ----------------- Recipe 1: Chicken Rice Bowl ----------------- */
                 Recipe chickenRice = new Recipe();
@@ -934,8 +952,10 @@ public class DataInitializer {
                 broccoliStirFry.getCategories().add(asianCat);
                 broccoliStirFry.getCategories().add(vegCat);
 
-                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, broccoli, 200.0, IngredientUnit.G));
-                broccoliStirFry.addIngredient(new RecipeIngredient(null, broccoliStirFry, rice, 150.0, IngredientUnit.G));
+                broccoliStirFry.addIngredient(
+                                new RecipeIngredient(null, broccoliStirFry, broccoli, 200.0, IngredientUnit.G));
+                broccoliStirFry.addIngredient(
+                                new RecipeIngredient(null, broccoliStirFry, rice, 150.0, IngredientUnit.G));
 
                 /* ----------------- Recipe 4: Spaghetti Bolognese ----------------- */
                 Recipe bolognese = new Recipe();
@@ -963,7 +983,6 @@ public class DataInitializer {
                 bolognese.addIngredient(new RecipeIngredient(null, bolognese, oliveOil, 15.0, IngredientUnit.ML));
                 // Giả sử dùng "Rice" thay cho "Pasta" để demo
                 bolognese.addIngredient(new RecipeIngredient(null, bolognese, rice, 150.0, IngredientUnit.G));
-
 
                 /* ----------------- Recipe 5: Simple Chicken Salad ----------------- */
                 Recipe chickenSalad = new Recipe();
@@ -1102,10 +1121,14 @@ public class DataInitializer {
                 rauMuongXaoToi.getCategories().add(quickCat);
                 rauMuongXaoToi.getCategories().add(vegCat);
 
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, waterSpinach, 300.0, IngredientUnit.G));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, garlic, 15.0, IngredientUnit.G));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, fishSauce, 10.0, IngredientUnit.ML));
-                rauMuongXaoToi.addIngredient(new RecipeIngredient(null, rauMuongXaoToi, vegetableOil, 15.0, IngredientUnit.ML));
+                rauMuongXaoToi.addIngredient(
+                                new RecipeIngredient(null, rauMuongXaoToi, waterSpinach, 300.0, IngredientUnit.G));
+                rauMuongXaoToi.addIngredient(
+                                new RecipeIngredient(null, rauMuongXaoToi, garlic, 15.0, IngredientUnit.G));
+                rauMuongXaoToi.addIngredient(
+                                new RecipeIngredient(null, rauMuongXaoToi, fishSauce, 10.0, IngredientUnit.ML));
+                rauMuongXaoToi.addIngredient(
+                                new RecipeIngredient(null, rauMuongXaoToi, vegetableOil, 15.0, IngredientUnit.ML));
 
                 /*
                  * ----------------- Recipe 10: Dau Hu Sot Ca (Tofu in Tomato Sauce)
@@ -1137,21 +1160,23 @@ public class DataInitializer {
                 dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, fishSauce, 10.0, IngredientUnit.ML));
                 dauHuSotCa.addIngredient(new RecipeIngredient(null, dauHuSotCa, vegetableOil, 20.0, IngredientUnit.ML));
 
-                /* ----------------- Recipe 11: Nem Ran (Fried Spring Rolls) ----------------- */
+                /*
+                 * ----------------- Recipe 11: Nem Ran (Fried Spring Rolls) -----------------
+                 */
                 Recipe nemRan = new Recipe();
                 nemRan.setCreatedBy(admin);
                 nemRan.setTitle("Nem rán (Chả giò)");
                 nemRan.setDescription("Vỏ giòn rụm, nhân thịt và rau củ thơm lừng, chấm nước mắm chua ngọt.");
                 nemRan.setInstructions("""
-                        1. Băm nhỏ thịt heo, nấm mèo, cà rốt. Trộn đều với trứng, giá đỗ, miến (nếu có).
-                        2. Nêm nếm với nước mắm, salt, đường.
-                        3. Trải bánh tráng, cho nhân vào và cuốn tròn.
-                        4. Chiên ngập dầu ở lửa vừa đến khi vàng giòn.
-                """);
+                                        1. Băm nhỏ thịt heo, nấm mèo, cà rốt. Trộn đều với trứng, giá đỗ, miến (nếu có).
+                                        2. Nêm nếm với nước mắm, salt, đường.
+                                        3. Trải bánh tráng, cho nhân vào và cuốn tròn.
+                                        4. Chiên ngập dầu ở lửa vừa đến khi vàng giòn.
+                                """);
                 nemRan.setCookingTimeMinutes(40);
                 nemRan.setImageUrl("https://images.unsplash.com/photo-1534939223126-b8f04f4a56d1");
                 nemRan.setStatus(RecipeStatus.PUBLISHED);
-                nemRan.setRole(MealRole.MAIN_DISH); 
+                nemRan.setRole(MealRole.MAIN_DISH);
                 nemRan.setMealType(MealType.LUNCH);
                 nemRan.getCategories().add(vietnameseCat);
                 nemRan.getCategories().add(appetizerCat);
@@ -1194,7 +1219,8 @@ public class DataInitializer {
                 comChien.addIngredient(new RecipeIngredient(null, comChien, egg, 2.0, IngredientUnit.EGG_PIECE));
                 comChien.addIngredient(new RecipeIngredient(null, comChien, carrot, 30.0, IngredientUnit.G));
                 comChien.addIngredient(new RecipeIngredient(null, comChien, peas, 30.0, IngredientUnit.G));
-                comChien.addIngredient(new RecipeIngredient(null, comChien, groundPork, 50.0, IngredientUnit.G)); // Dùng tạm
+                comChien.addIngredient(new RecipeIngredient(null, comChien, groundPork, 50.0, IngredientUnit.G)); // Dùng
+                                                                                                                  // tạm
                 comChien.addIngredient(new RecipeIngredient(null, comChien, soySauce, 15.0, IngredientUnit.ML));
                 comChien.addIngredient(new RecipeIngredient(null, comChien, greenOnion, 10.0, IngredientUnit.G));
 
@@ -1296,12 +1322,12 @@ public class DataInitializer {
                 goiCuon.setTitle("Gỏi cuốn tôm thịt");
                 goiCuon.setDescription("Món khai vị thanh mát, cuốn bánh tráng với bún, rau sống, tôm, thịt.");
                 goiCuon.setInstructions("""
-                        1. Luộc chín tôm và thịt ba rọi. Thái mỏng thịt, chẻ đôi tôm.
-                        2. Trụng sơ bún (rice noodles).
-                        3. Nhúng bánh tráng (rice paper) vào nước cho mềm.
-                        4. Trải bánh tráng, xếp rau xà lách, ngò rí, bún, thịt, tôm lên trên.
-                        5. Cuốn chặt tay. Ăn kèm tương chấm (đậu phộng).
-                """);
+                                        1. Luộc chín tôm và thịt ba rọi. Thái mỏng thịt, chẻ đôi tôm.
+                                        2. Trụng sơ bún (rice noodles).
+                                        3. Nhúng bánh tráng (rice paper) vào nước cho mềm.
+                                        4. Trải bánh tráng, xếp rau xà lách, ngò rí, bún, thịt, tôm lên trên.
+                                        5. Cuốn chặt tay. Ăn kèm tương chấm (đậu phộng).
+                                """);
                 goiCuon.setCookingTimeMinutes(25);
                 goiCuon.setImageUrl("https://images.unsplash.com/photo-1512152272829-e3139592d56f");
                 goiCuon.setStatus(RecipeStatus.PUBLISHED);
@@ -1313,11 +1339,11 @@ public class DataInitializer {
 
                 // === ĐỊNH LƯỢNG CHO 1 NGƯỜI (3-4 cuốn) ===
 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, shrimp, 50.0, IngredientUnit.G)); 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, porkBelly, 50.0, IngredientUnit.G)); 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, ricePaper, 40.0, IngredientUnit.G)); 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, riceNoodles, 80.0, IngredientUnit.G)); 
-                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, lettuce, 50.0, IngredientUnit.G)); 
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, shrimp, 50.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, porkBelly, 50.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, ricePaper, 40.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, riceNoodles, 80.0, IngredientUnit.G));
+                goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, lettuce, 50.0, IngredientUnit.G));
                 goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, cilantro, 10.0, IngredientUnit.G));
                 goiCuon.addIngredient(new RecipeIngredient(null, goiCuon, peanuts, 10.0, IngredientUnit.G));
 
@@ -1350,7 +1376,8 @@ public class DataInitializer {
                 bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, chiliOil, 5.0, IngredientUnit.G));
                 bunBoHue.addIngredient(new RecipeIngredient(null, bunBoHue, fishSauce, 15.0, IngredientUnit.ML));
 
-                // /* ----------------- Recipe 18: Com Tam Suon (Broken Rice) ----------------- */
+                // /* ----------------- Recipe 18: Com Tam Suon (Broken Rice) -----------------
+                // */
                 Recipe comTam = new Recipe();
                 comTam.setCreatedBy(admin);
                 comTam.setTitle("Cơm tấm sườn nướng");
@@ -1431,10 +1458,13 @@ public class DataInitializer {
                 banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, egg, 4.0, IngredientUnit.EGG_PIECE));
                 banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, milk, 300.0, IngredientUnit.ML));
                 banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, condensedMilk, 100.0, IngredientUnit.G));
-                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, sugar, 50.0, IngredientUnit.G)); // Để làm caramel
+                banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, sugar, 50.0, IngredientUnit.G)); // Để làm
+                                                                                                             // caramel
                 banhFlan.addIngredient(new RecipeIngredient(null, banhFlan, vanillaExtract, 5.0, IngredientUnit.ML));
 
-                /* ----------------- Recipe 21: Banh Mi (Vietnamese Sandwich) ----------------- */
+                /*
+                 * ----------------- Recipe 21: Banh Mi (Vietnamese Sandwich) -----------------
+                 */
                 Recipe banhMi = new Recipe();
                 banhMi.setCreatedBy(admin);
                 banhMi.setTitle("Bánh mì thịt");
@@ -1459,7 +1489,10 @@ public class DataInitializer {
                 banhMi.addIngredient(new RecipeIngredient(null, banhMi, cilantro, 10.0, IngredientUnit.G));
                 banhMi.addIngredient(new RecipeIngredient(null, banhMi, soySauce, 10.0, IngredientUnit.ML));
 
-                /* ----------------- Recipe 22: Xoi Ga (Sticky Rice with Chicken) ----------------- */
+                /*
+                 * ----------------- Recipe 22: Xoi Ga (Sticky Rice with Chicken)
+                 * -----------------
+                 */
                 Recipe xoiGa = new Recipe();
                 xoiGa.setCreatedBy(admin);
                 xoiGa.setTitle("Xôi gà");
@@ -1479,14 +1512,17 @@ public class DataInitializer {
                 xoiGa.getCategories().add(vietnameseCat);
                 xoiGa.getCategories().add(asianCat);
 
-                xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, rice, 180.0, IngredientUnit.G)); // glutinous rice substitute
+                xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, rice, 180.0, IngredientUnit.G)); // glutinous rice
+                                                                                                       // substitute
                 xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, chicken, 80.0, IngredientUnit.G));
                 xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, onion, 30.0, IngredientUnit.G));
                 xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, vegetableOil, 20.0, IngredientUnit.ML));
                 xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, soySauce, 15.0, IngredientUnit.ML));
                 xoiGa.addIngredient(new RecipeIngredient(null, xoiGa, cilantro, 5.0, IngredientUnit.G));
 
-                /* ----------------- Recipe 23: Che Buoi (Pomelo Sweet Soup) ----------------- */
+                /*
+                 * ----------------- Recipe 23: Che Buoi (Pomelo Sweet Soup) -----------------
+                 */
                 Recipe cheBuoi = new Recipe();
                 cheBuoi.setCreatedBy(admin);
                 cheBuoi.setTitle("Chè bưởi");
@@ -1506,24 +1542,308 @@ public class DataInitializer {
                 cheBuoi.getCategories().add(dessertCat);
                 cheBuoi.getCategories().add(vietnameseCat);
 
-                cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, milk, 200.0, IngredientUnit.ML)); // Coconut milk substitute
+                cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, milk, 200.0, IngredientUnit.ML)); // Coconut
+                                                                                                            // milk
+                                                                                                            // substitute
                 cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, sugar, 40.0, IngredientUnit.G));
                 cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, beanSprouts, 50.0, IngredientUnit.G)); // Substitute
-                cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, cilantro, 20.0, IngredientUnit.G)); // Pomelo substitute
+                cheBuoi.addIngredient(new RecipeIngredient(null, cheBuoi, cilantro, 20.0, IngredientUnit.G)); // Pomelo
+                                                                                                              // substitute
 
-                /* ----------------- CẬP NHẬT Save all (TỔNG 23 MÓN) ----------------- */
+                /* ----------------- Recipe 24: Mi Quang (Quang Noodles) ----------------- */
+                Recipe miQuang = new Recipe();
+                miQuang.setCreatedBy(admin);
+                miQuang.setTitle("Mì Quảng");
+                miQuang.setDescription("Đặc sản miền Trung với sợi mì vàng, nước dùng đậm đà, tôm thịt thơm ngon.");
+                miQuang.setInstructions("""
+                                    1. Nấu nước dùng từ xương heo, tôm khô.
+                                    2. Ướp tôm, thịt với nghệ, gia vị.
+                                    3. Xào tôm thịt cho thơm.
+                                    4. Trụng mì, xếp lên bát với rau sống.
+                                    5. Chan nước dùng, thêm đậu phộng rang, bánh tráng nướng.
+                                """);
+                miQuang.setCookingTimeMinutes(60);
+                miQuang.setImageUrl("https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43");
+                miQuang.setStatus(RecipeStatus.PUBLISHED);
+                miQuang.setRole(MealRole.MAIN_DISH);
+                miQuang.setMealType(MealType.BREAKFAST);
+                miQuang.getCategories().add(vietnameseCat);
+                miQuang.getCategories().add(noodlesCat);
+                miQuang.getCategories().add(seafoodCat);
+
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, riceNoodles, 150.0, IngredientUnit.G));
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, shrimp, 80.0, IngredientUnit.G));
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, porkBelly, 80.0, IngredientUnit.G));
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, peanuts, 20.0, IngredientUnit.G));
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, lettuce, 50.0, IngredientUnit.G));
+                miQuang.addIngredient(new RecipeIngredient(null, miQuang, fishSauce, 15.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 25: Hu Tieu Nam Vang ----------------- */
+                Recipe huTieu = new Recipe();
+                huTieu.setCreatedBy(admin);
+                huTieu.setTitle("Hủ tiếu Nam Vang");
+                huTieu.setDescription("Món hủ tiếu nước trong, ngọt thanh với tôm, thịt, gan, trứng cút.");
+                huTieu.setInstructions("""
+                                    1. Hầm xương heo lấy nước dùng trong.
+                                    2. Luộc tôm, thịt băm viên, gan heo.
+                                    3. Trụng hủ tiếu, xếp vào tô.
+                                    4. Xếp tôm, thịt, gan, giá đỗ, hành lá lên trên.
+                                    5. Chan nước dùng nóng, ăn kèm tương ớt.
+                                """);
+                huTieu.setCookingTimeMinutes(45);
+                huTieu.setImageUrl("https://images.unsplash.com/photo-1569718212165-3a8278d5f624");
+                huTieu.setStatus(RecipeStatus.PUBLISHED);
+                huTieu.setRole(MealRole.MAIN_DISH);
+                huTieu.setMealType(MealType.BREAKFAST);
+                huTieu.getCategories().add(vietnameseCat);
+                huTieu.getCategories().add(noodlesCat);
+                huTieu.getCategories().add(highProteinCat);
+
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, riceNoodles, 150.0, IngredientUnit.G));
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, shrimp, 60.0, IngredientUnit.G));
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, groundPork, 80.0, IngredientUnit.G));
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, beanSprouts, 50.0, IngredientUnit.G));
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, greenOnion, 15.0, IngredientUnit.G));
+                huTieu.addIngredient(new RecipeIngredient(null, huTieu, fishSauce, 15.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 26: Bun Cha Ha Noi ----------------- */
+                Recipe bunCha = new Recipe();
+                bunCha.setCreatedBy(admin);
+                bunCha.setTitle("Bún chả Hà Nội");
+                bunCha.setDescription("Thịt nướng thơm lừng, chấm nước mắm chua ngọt, ăn với bún và rau sống.");
+                bunCha.setInstructions("""
+                                    1. Ướp thịt ba rọi và thịt băm với mắm, đường, tỏi.
+                                    2. Nướng thịt trên than hoa hoặc lò nướng.
+                                    3. Pha nước mắm chua ngọt (mắm, đường, chanh, tỏi, ớt).
+                                    4. Cho thịt nướng vào bát nước mắm.
+                                    5. Ăn kèm bún tươi và rau sống.
+                                """);
+                bunCha.setCookingTimeMinutes(40);
+                bunCha.setImageUrl("https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba");
+                bunCha.setStatus(RecipeStatus.PUBLISHED);
+                bunCha.setRole(MealRole.MAIN_DISH);
+                bunCha.setMealType(MealType.LUNCH);
+                bunCha.getCategories().add(vietnameseCat);
+                bunCha.getCategories().add(grilledCat);
+                bunCha.getCategories().add(highProteinCat);
+
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, porkBelly, 150.0, IngredientUnit.G));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, groundPork, 80.0, IngredientUnit.G));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, riceNoodles, 150.0, IngredientUnit.G));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, fishSauce, 30.0, IngredientUnit.ML));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, sugar, 20.0, IngredientUnit.G));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, garlic, 10.0, IngredientUnit.G));
+                bunCha.addIngredient(new RecipeIngredient(null, bunCha, lettuce, 80.0, IngredientUnit.G));
+
+                /* ----------------- Recipe 27: Ca Kho To (Caramelized Fish) ----------------- */
+                Recipe caKhoTo = new Recipe();
+                caKhoTo.setCreatedBy(admin);
+                caKhoTo.setTitle("Cá kho tộ");
+                caKhoTo.setDescription("Cá lóc kho trong niêu đất với nước màu, tiêu đen, ăn với cơm trắng.");
+                caKhoTo.setInstructions("""
+                                    1. Cắt cá thành khúc, ướp với nước mắm, tiêu.
+                                    2. Thắng đường làm nước màu (caramel).
+                                    3. Phi hành tỏi, xếp cá vào niêu đất.
+                                    4. Đổ nước dừa và nước màu vào, kho lửa nhỏ.
+                                    5. Kho đến khi nước sệt lại, rắc tiêu và hành lá.
+                                """);
+                caKhoTo.setCookingTimeMinutes(50);
+                caKhoTo.setImageUrl("https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2");
+                caKhoTo.setStatus(RecipeStatus.PUBLISHED);
+                caKhoTo.setRole(MealRole.MAIN_DISH);
+                caKhoTo.setMealType(MealType.LUNCH);
+                caKhoTo.getCategories().add(vietnameseCat);
+                caKhoTo.getCategories().add(seafoodCat);
+                caKhoTo.getCategories().add(highProteinCat);
+
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, catfish, 250.0, IngredientUnit.G));
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, coconutWater, 100.0, IngredientUnit.ML));
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, fishSauce, 25.0, IngredientUnit.ML));
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, sugar, 15.0, IngredientUnit.G));
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, garlic, 10.0, IngredientUnit.G));
+                caKhoTo.addIngredient(new RecipeIngredient(null, caKhoTo, onion, 30.0, IngredientUnit.G));
+
+                /* ----------------- Recipe 28: Tom Nuong Muoi Ot (Grilled Shrimp) ----------------- */
+                Recipe tomNuong = new Recipe();
+                tomNuong.setCreatedBy(admin);
+                tomNuong.setTitle("Tôm nướng muối ớt");
+                tomNuong.setDescription("Tôm sú tươi nướng với muối ớt cay thơm, vỏ giòn thịt ngọt.");
+                tomNuong.setInstructions("""
+                                    1. Rửa sạch tôm, để nguyên vỏ.
+                                    2. Ướp tôm với muối, ớt bột, tỏi băm, dầu ăn.
+                                    3. Nướng tôm trên bếp than hoặc lò nướng.
+                                    4. Nướng đến khi tôm chín đỏ, vỏ hơi cháy xém.
+                                    5. Ăn kèm muối tiêu chanh.
+                                """);
+                tomNuong.setCookingTimeMinutes(20);
+                tomNuong.setImageUrl("https://images.unsplash.com/photo-1565680018093-5ac96e3ce654");
+                tomNuong.setStatus(RecipeStatus.PUBLISHED);
+                tomNuong.setRole(MealRole.MAIN_DISH);
+                tomNuong.setMealType(MealType.DINNER);
+                tomNuong.getCategories().add(vietnameseCat);
+                tomNuong.getCategories().add(seafoodCat);
+                tomNuong.getCategories().add(grilledCat);
+                tomNuong.getCategories().add(spicyCat);
+
+                tomNuong.addIngredient(new RecipeIngredient(null, tomNuong, shrimp, 200.0, IngredientUnit.G));
+                tomNuong.addIngredient(new RecipeIngredient(null, tomNuong, chili, 15.0, IngredientUnit.G));
+                tomNuong.addIngredient(new RecipeIngredient(null, tomNuong, garlic, 10.0, IngredientUnit.G));
+                tomNuong.addIngredient(new RecipeIngredient(null, tomNuong, vegetableOil, 15.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 29: Canh Ga Chien Nuoc Mam (Fried Chicken Wings) ----------------- */
+                Recipe canhGaChien = new Recipe();
+                canhGaChien.setCreatedBy(admin);
+                canhGaChien.setTitle("Cánh gà chiên nước mắm");
+                canhGaChien.setDescription("Cánh gà chiên giòn phủ lớp nước mắm caramel ngọt mặn đậm đà.");
+                canhGaChien.setInstructions("""
+                                    1. Ướp cánh gà với muối, tiêu, tỏi.
+                                    2. Chiên cánh gà 2 lần cho giòn.
+                                    3. Làm sốt: đun nước mắm, đường, tỏi cho sệt.
+                                    4. Trộn đều cánh gà với sốt nước mắm.
+                                    5. Rắc tỏi phi và tiêu lên trên.
+                                """);
+                canhGaChien.setCookingTimeMinutes(35);
+                canhGaChien.setImageUrl("https://images.unsplash.com/photo-1567620832903-9fc6debc209f");
+                canhGaChien.setStatus(RecipeStatus.PUBLISHED);
+                canhGaChien.setRole(MealRole.MAIN_DISH);
+                canhGaChien.setMealType(MealType.DINNER);
+                canhGaChien.getCategories().add(vietnameseCat);
+                canhGaChien.getCategories().add(friedCat);
+                canhGaChien.getCategories().add(highProteinCat);
+
+                canhGaChien.addIngredient(new RecipeIngredient(null, canhGaChien, chicken, 300.0, IngredientUnit.G));
+                canhGaChien.addIngredient(new RecipeIngredient(null, canhGaChien, fishSauce, 30.0, IngredientUnit.ML));
+                canhGaChien.addIngredient(new RecipeIngredient(null, canhGaChien, sugar, 25.0, IngredientUnit.G));
+                canhGaChien.addIngredient(new RecipeIngredient(null, canhGaChien, garlic, 15.0, IngredientUnit.G));
+                canhGaChien.addIngredient(new RecipeIngredient(null, canhGaChien, vegetableOil, 100.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 30: Banh Bao (Steamed Bun) ----------------- */
+                Recipe banhBao = new Recipe();
+                banhBao.setCreatedBy(admin);
+                banhBao.setTitle("Bánh bao nhân thịt");
+                banhBao.setDescription("Bánh bao trắng mềm với nhân thịt heo, trứng cút, nấm mèo.");
+                banhBao.setInstructions("""
+                                    1. Làm nhân: xào thịt heo băm với hành, nấm mèo, nêm gia vị.
+                                    2. Nhồi bột, ủ bột nở.
+                                    3. Cán bột, cho nhân và trứng cút đã luộc vào.
+                                    4. Gói bánh, để nghỉ 15 phút.
+                                    5. Hấp bánh 15-20 phút cho chín.
+                                """);
+                banhBao.setCookingTimeMinutes(60);
+                banhBao.setImageUrl("https://images.unsplash.com/photo-1529023466172-04920dd6926a");
+                banhBao.setStatus(RecipeStatus.PUBLISHED);
+                banhBao.setRole(MealRole.MAIN_DISH);
+                banhBao.setMealType(MealType.SNACK);
+                banhBao.getCategories().add(vietnameseCat);
+                banhBao.getCategories().add(asianCat);
+
+                banhBao.addIngredient(new RecipeIngredient(null, banhBao, groundPork, 100.0, IngredientUnit.G));
+                banhBao.addIngredient(new RecipeIngredient(null, banhBao, egg, 2.0, IngredientUnit.EGG_PIECE));
+                banhBao.addIngredient(new RecipeIngredient(null, banhBao, woodEarMushroom, 15.0, IngredientUnit.G));
+                banhBao.addIngredient(new RecipeIngredient(null, banhBao, onion, 30.0, IngredientUnit.G));
+                banhBao.addIngredient(new RecipeIngredient(null, banhBao, fishSauce, 10.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 31: Cha Ca La Vong (Turmeric Fish) ----------------- */
+                Recipe chaCa = new Recipe();
+                chaCa.setCreatedBy(admin);
+                chaCa.setTitle("Chả cá Lã Vọng");
+                chaCa.setDescription("Đặc sản Hà Nội với cá lóc chiên vàng nghệ, ăn với bún và rau thì là.");
+                chaCa.setInstructions("""
+                                    1. Ướp cá với nghệ, mẻ, mắm tôm, dầu ăn.
+                                    2. Chiên cá trong chảo dầu cho vàng đều.
+                                    3. Thêm hành lá, thì là (dùng tạm cilantro) vào chảo.
+                                    4. Đảo nhanh tay, tắt bếp.
+                                    5. Ăn kèm bún, đậu phộng rang, mắm tôm.
+                                """);
+                chaCa.setCookingTimeMinutes(30);
+                chaCa.setImageUrl("https://images.unsplash.com/photo-1580476262798-bddd9f4b7369");
+                chaCa.setStatus(RecipeStatus.PUBLISHED);
+                chaCa.setRole(MealRole.MAIN_DISH);
+                chaCa.setMealType(MealType.DINNER);
+                chaCa.getCategories().add(vietnameseCat);
+                chaCa.getCategories().add(seafoodCat);
+                chaCa.getCategories().add(friedCat);
+
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, catfish, 250.0, IngredientUnit.G));
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, ginger, 10.0, IngredientUnit.G)); // Substitute for turmeric
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, riceNoodles, 150.0, IngredientUnit.G));
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, peanuts, 20.0, IngredientUnit.G));
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, greenOnion, 30.0, IngredientUnit.G));
+                chaCa.addIngredient(new RecipeIngredient(null, chaCa, vegetableOil, 50.0, IngredientUnit.ML));
+
+                /* ----------------- Recipe 32: Bun Rieu Cua (Crab Noodle Soup) ----------------- */
+                Recipe bunRieu = new Recipe();
+                bunRieu.setCreatedBy(admin);
+                bunRieu.setTitle("Bún riêu cua");
+                bunRieu.setDescription("Bún với nước dùng chua từ cà chua, riêu cua đồng béo ngậy.");
+                bunRieu.setInstructions("""
+                                    1. Xay cua với nước, lọc lấy nước cua.
+                                    2. Đun nước cua, khuấy nhẹ cho riêu nổi lên.
+                                    3. Xào cà chua, cho vào nồi nước dùng.
+                                    4. Nêm mắm tôm, mắm, muối cho vừa vị.
+                                    5. Trụng bún, chan nước, xếp riêu cua, đậu hũ, rau.
+                                """);
+                bunRieu.setCookingTimeMinutes(50);
+                bunRieu.setImageUrl("https://images.unsplash.com/photo-1555126634-323283e090fa");
+                bunRieu.setStatus(RecipeStatus.PUBLISHED);
+                bunRieu.setRole(MealRole.MAIN_DISH);
+                bunRieu.setMealType(MealType.LUNCH);
+                bunRieu.getCategories().add(vietnameseCat);
+                bunRieu.getCategories().add(noodlesCat);
+                bunRieu.getCategories().add(seafoodCat);
+                bunRieu.getCategories().add(soupCat);
+
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, shrimp, 100.0, IngredientUnit.G)); // Substitute for crab
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, riceNoodles, 150.0, IngredientUnit.G));
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, tomato, 150.0, IngredientUnit.G));
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, tofu, 80.0, IngredientUnit.G));
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, shrimpPaste, 10.0, IngredientUnit.G));
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, fishSauce, 15.0, IngredientUnit.ML));
+                bunRieu.addIngredient(new RecipeIngredient(null, bunRieu, beanSprouts, 50.0, IngredientUnit.G));
+
+                /* ----------------- Recipe 33: Thit Nuong BBQ (Grilled Pork) ----------------- */
+                Recipe thitNuong = new Recipe();
+                thitNuong.setCreatedBy(admin);
+                thitNuong.setTitle("Thịt nướng BBQ kiểu Việt");
+                thitNuong.setDescription("Thịt heo ướp sả ớt nướng than, thơm lừng đậm đà.");
+                thitNuong.setInstructions("""
+                                    1. Thái thịt mỏng, ướp với sả, tỏi, mật ong, nước mắm.
+                                    2. Để ướp ít nhất 2 tiếng hoặc qua đêm.
+                                    3. Nướng thịt trên bếp than hoặc chảo gang.
+                                    4. Nướng đến khi xém vàng, thơm.
+                                    5. Ăn kèm cơm tấm hoặc bún.
+                                """);
+                thitNuong.setCookingTimeMinutes(30);
+                thitNuong.setImageUrl("https://images.unsplash.com/photo-1544025162-d76694265947");
+                thitNuong.setStatus(RecipeStatus.PUBLISHED);
+                thitNuong.setRole(MealRole.MAIN_DISH);
+                thitNuong.setMealType(MealType.DINNER);
+                thitNuong.getCategories().add(vietnameseCat);
+                thitNuong.getCategories().add(grilledCat);
+                thitNuong.getCategories().add(highProteinCat);
+
+                thitNuong.addIngredient(new RecipeIngredient(null, thitNuong, porkChop, 200.0, IngredientUnit.G));
+                thitNuong.addIngredient(new RecipeIngredient(null, thitNuong, lemongrass, 30.0, IngredientUnit.G));
+                thitNuong.addIngredient(new RecipeIngredient(null, thitNuong, garlic, 10.0, IngredientUnit.G));
+                thitNuong.addIngredient(new RecipeIngredient(null, thitNuong, honey, 15.0, IngredientUnit.G));
+                thitNuong.addIngredient(new RecipeIngredient(null, thitNuong, fishSauce, 20.0, IngredientUnit.ML));
+
+                /* ----------------- CẬP NHẬT Save all (TỔNG 33 MÓN) ----------------- */
                 // Calculate calories for each recipe based on its ingredients and ingredient
                 // nutritions
                 List<Recipe> recipesToSave = List.of(
                                 chickenRice, broccoliStirFry, chickenSalad, bolognese, roastedVegs,
                                 phoBo, gaXaoSaOt, rauMuongXaoToi, dauHuSotCa, nemRan,
                                 comChien, thitKho, boLucLac, canhChua, goiCuon,
-                                bunBoHue, comTam, supGaNgo, banhFlan, 
-                                banhMi, xoiGa, cheBuoi);
+                                bunBoHue, comTam, supGaNgo, banhFlan,
+                                banhMi, xoiGa, cheBuoi,
+                                miQuang, huTieu, bunCha, caKhoTo, tomNuong,
+                                canhGaChien, banhBao, chaCa, bunRieu, thitNuong);
 
                 for (Recipe rx : recipesToSave) {
                         try {
-                                BigDecimal cal = CalculateCalories.computeRecipeCalories(rx, ingredientNutritionRepository);
+                                BigDecimal cal = CalculateCalories.computeRecipeCalories(rx,
+                                                ingredientNutritionRepository);
                                 rx.setCalories(cal);
                         } catch (Exception e) {
                                 e.printStackTrace();

@@ -9,7 +9,9 @@ import com.project.mealplan.dtos.recipe.request.UpdateRecipeDto;
 import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
 import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
+import com.project.mealplan.dtos.recipeCategory.response.RecipeCategoryDto;
 import com.project.mealplan.security.CurrentUser;
+import com.project.mealplan.service.RecipeCategoryService;
 import com.project.mealplan.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 public class RecipeController {
     private final RecipeService recipeService;
+    private final RecipeCategoryService recipeCategoryService;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
@@ -164,7 +168,7 @@ public class RecipeController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @Operation(summary = "Update recipe status to PENDING or DRAFT by id")
     public ResponseEntity<ApiResponse<RecipeResponseDto>> updateRecipeStatus(
             @PathVariable Long id,
@@ -185,4 +189,16 @@ public class RecipeController {
                 .build());
     }
 
+    @GetMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @Operation(summary = "Get Recipe Categories", description = "Get all recipe categories")
+    public ResponseEntity<ApiResponse<List<RecipeCategoryDto>>> getRecipeCategories() {
+        List<RecipeCategoryDto> recipeCategories = recipeCategoryService.getAllCategories();
+        ApiResponse<List<RecipeCategoryDto>> response = new ApiResponse<>(
+                                        HttpStatus.OK.value(),
+                                        "Recipe Categories get successfully",
+                                        recipeCategories);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
