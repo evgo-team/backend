@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.mealplan.common.response.ApiResponse;
-import com.project.mealplan.dtos.PantryItemRequest;
-import com.project.mealplan.dtos.PantryItemResponse;
+import com.project.mealplan.dtos.pantry.request.PantryItemRequest;
+import com.project.mealplan.dtos.pantry.response.PantryItemResponse;
 import com.project.mealplan.security.jwt.SecurityUtil;
 import com.project.mealplan.service.impl.PantryServiceImpl;
 

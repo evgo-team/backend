@@ -1,5 +1,6 @@
 package com.project.mealplan.dtos.profile.request;
 
+import com.project.mealplan.common.enums.ActivityLevel;
 import com.project.mealplan.common.enums.DietType;
 import com.project.mealplan.common.enums.Gender;
 import com.project.mealplan.common.enums.HealthCondition;
@@ -29,8 +30,7 @@ public class UpdateProfileRequest {
     @Size(max = 500, message = "Bio must not exceed 500 characters")
     private String bio;
 
-    @Size(max = 100, message = "Activity level must not exceed 100 characters")
-    private String activityLevel;
+    private ActivityLevel activityLevel;
 
     private HealthCondition healthCondition;
 
