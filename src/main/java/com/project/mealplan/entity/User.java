@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.project.mealplan.common.enums.ActivityLevel;
 import com.project.mealplan.common.enums.DietType;
 import com.project.mealplan.common.enums.Gender;
 import com.project.mealplan.common.enums.HealthCondition;
@@ -68,7 +69,8 @@ public class User {
   private String bio;
 
   @Column(name = "activity_level", length = 100)
-  private String activityLevel;
+  @Enumerated(EnumType.STRING)
+  private ActivityLevel activityLevel;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

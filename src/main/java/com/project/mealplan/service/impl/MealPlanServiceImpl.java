@@ -276,7 +276,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         }
 
         // Activity multiplier (default to moderate = 1.55)
-        BigDecimal activityMultiplier = getActivityMultiplier(user.getActivityLevel());
+        BigDecimal activityMultiplier = getActivityMultiplier(user.getActivityLevel().name());
         BigDecimal tdee = bmr.multiply(activityMultiplier);
 
         return tdee.setScale(0, RoundingMode.HALF_UP);

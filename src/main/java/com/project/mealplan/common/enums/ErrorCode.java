@@ -50,7 +50,17 @@ public enum ErrorCode {
     INVALID_DATE_FORMAT(6003, HttpStatus.BAD_REQUEST, "Invalid date format. Expected yyyy-MM-dd"),
     INSUFFICIENT_USER_PROFILE(6004, HttpStatus.BAD_REQUEST,
             "User profile incomplete. Weight, height, age required for meal planning"),
-    NO_RECIPES_AVAILABLE(6005, HttpStatus.BAD_REQUEST, "No recipes available for meal planning");
+    NO_RECIPES_AVAILABLE(6005, HttpStatus.BAD_REQUEST, "No recipes available for meal planning"),
+
+    // ====== SHOPPING LIST ======
+    SHOPPING_LIST_NOT_FOUND(7001, HttpStatus.NOT_FOUND, "Shopping list not found"),
+    SHOPPING_LIST_ITEM_NOT_FOUND(7002, HttpStatus.NOT_FOUND, "Shopping list item not found"),
+    SHOPPING_LIST_ALREADY_EXISTS(7003, HttpStatus.CONFLICT, "Shopping list already exists for this meal plan"),
+    MEAL_PLAN_EXPIRED(7004, HttpStatus.BAD_REQUEST, "Meal plan has expired and cannot be used"),
+    UNAUTHORIZED_ACCESS_SHOPPING_LIST(7005, HttpStatus.FORBIDDEN,
+            "You do not have permission to access this shopping list")
+    
+    ;
 
     private final int code;
     private final HttpStatus status;

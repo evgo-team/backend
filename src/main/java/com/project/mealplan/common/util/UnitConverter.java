@@ -81,4 +81,41 @@ public class UnitConverter {
             default -> false;
         };
     }
+
+    public static BigDecimal toGram(BigDecimal quantity, IngredientUnit unit) {
+        if (quantity == null || unit == null) return BigDecimal.ZERO;
+
+        BigDecimal result = switch (unit) {
+            case MG -> quantity.multiply(MG_TO_G);
+            case G  -> quantity;
+            case KG -> quantity.multiply(KG_TO_G);
+            case OZ -> quantity.multiply(OZ_TO_G);
+            case LB -> quantity.multiply(LB_TO_G);
+            case EGG_PIECE -> quantity.multiply(EGG_PIECE_TO_G);
+            default -> BigDecimal.ZERO;
+        };
+        return result;
+    }
+
+    public static BigDecimal toMl(BigDecimal quantity, IngredientUnit unit) {
+        if (quantity == null || unit == null) return BigDecimal.ZERO;
+
+        BigDecimal result = switch (unit) {
+            case ML -> quantity;
+            case L  -> quantity.multiply(ML_PER_L);
+            case DL -> quantity.multiply(ML_PER_DL);
+            case CL -> quantity.multiply(ML_PER_CL);
+
+            case TSP -> quantity.multiply(TSP_TO_ML);
+            case TBS -> quantity.multiply(TBS_TO_ML);
+            case CUP -> quantity.multiply(CUP_TO_ML);
+            case FLOZ -> quantity.multiply(FLOZ_TO_ML);
+            case PINT -> quantity.multiply(PINT_TO_ML);
+            case QUART -> quantity.multiply(QUART_TO_ML);
+            case GALLON -> quantity.multiply(GALLON_TO_ML);
+
+            default -> BigDecimal.ZERO;
+        };
+        return result;
+    }
 }
