@@ -91,6 +91,7 @@ public class DataInitializer {
                 user.setFullName("Normal User");
                 user.setStatus(UserStatus.ACTIVE);
                 user.setRoles(Set.of(userRole));
+                user.setActivityLevel(ActivityLevel.LIGHT);
 
                 userRepository.saveAll(List.of(admin, user));
 
