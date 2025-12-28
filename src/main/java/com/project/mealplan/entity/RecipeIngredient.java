@@ -9,10 +9,8 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Table(
-    name = "recipe_ingredient",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"recipe_id", "ingredient_id"})
-)
+@Table(name = "recipe_ingredient", uniqueConstraints = @UniqueConstraint(columnNames = { "recipe_id",
+        "ingredient_id" }))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,12 +32,16 @@ public class RecipeIngredient {
 
     private Double quantity;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private IngredientUnit unit;
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RecipeIngredient)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof RecipeIngredient))
+            return false;
         RecipeIngredient that = (RecipeIngredient) o;
         return Objects.equals(id, that.id);
     }
