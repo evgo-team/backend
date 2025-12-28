@@ -14,9 +14,14 @@ import com.project.mealplan.common.enums.ErrorCode;
 import com.project.mealplan.common.enums.MealType;
 import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.common.exception.AppException;
+import com.project.mealplan.dtos.mealplan.request.UpdateMealSlotRecipeRequest;
 import com.project.mealplan.dtos.mealplan.response.MealDayResponse;
+import com.project.mealplan.dtos.mealplan.response.MealSlotDetailResponse;
+import com.project.mealplan.dtos.mealplan.response.MealSlotListResponse;
 import com.project.mealplan.dtos.mealplan.response.MealSlotResponse;
+import com.project.mealplan.dtos.mealplan.response.NutritionDetailResponse;
 import com.project.mealplan.dtos.mealplan.response.NutritionSummaryResponse;
+import com.project.mealplan.dtos.mealplan.response.UpdatedMealSlotResponse;
 import com.project.mealplan.dtos.mealplan.response.WeeklyMealPlanResponse;
 import com.project.mealplan.entity.*;
 import com.project.mealplan.repository.*;
@@ -34,6 +39,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
     private final PantryRepository pantryRepository;
+    private final MealSlotRepository mealSlotRepository;
 
     // Scoring weights
     private static final double CALORIE_WEIGHT = 0.5;
@@ -473,5 +479,171 @@ public class MealPlanServiceImpl implements MealPlanService {
         nutrition.put("fat", fat);
 
         return nutrition;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MealSlotListResponse getMealSlotsByDateAndMealType(Long userId, LocalDate date, MealType mealType) {
+        log.info("Getting meal slots for user: {}, date: {}, mealType: {}", userId, date, mealType);
+
+        LocalDate weekStart = calculateWeekStart(date);
+
+        MealPlan mealPlan = mealPlanRepository.findByUser_UserIdAndStartDate(userId, weekStart)
+                .orElse(null);
+
+        MealSlotListResponse response = MealSlotListResponse.builder()
+                .date(date)
+                .mealType(mealType)
+                .slots(new ArrayList<>())
+                .nutritionSummary(NutritionSummaryResponse.builder()
+                        .totalCalories(BigDecimal.ZERO)
+                        .protein(BigDecimal.ZERO)
+                        .carbs(BigDecimal.ZERO)
+                        .fat(BigDecimal.ZERO)
+                        .build())
+                .build();
+
+        if (mealPlan == null) {
+            log.debug("No meal plan found for user: {}, weekStart: {}", userId, weekStart);
+            return response;
+        }
+
+        MealDay mealDay = mealPlan.getMealDays().stream()
+                .filter(md -> md.getDate().equals(date))
+                .findFirst()
+                .orElse(null);
+
+        if (mealDay == null) {
+            log.debug("No meal day found for date: {}", date);
+            return response;
+        }
+
+        List<MealSlot> mealSlots = mealDay.getMealSlots().stream()
+                .filter(slot -> slot.getType() == mealType)
+                .collect(Collectors.toList());
+
+        List<MealSlotDetailResponse> slots = new ArrayList<>();
+        BigDecimal totalCalories = BigDecimal.ZERO;
+        BigDecimal totalProtein = BigDecimal.ZERO;
+        BigDecimal totalCarbs = BigDecimal.ZERO;
+        BigDecimal totalFat = BigDecimal.ZERO;
+
+        for (MealSlot mealSlot : mealSlots) {
+            Recipe recipe = mealSlot.getRecipe();
+            Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
+
+            MealSlotDetailResponse slotResponse = MealSlotDetailResponse.builder()
+                    .mealSlotId(mealSlot.getId())
+                    .recipeId(recipe.getRecipeId())
+                    .title(recipe.getTitle())
+                    .imageUrl(recipe.getImageUrl())
+                    .calories(recipe.getCalories())
+                    .nutrition(NutritionDetailResponse.builder()
+                            .protein(nutrition.getOrDefault("protein", BigDecimal.ZERO))
+                            .carbs(nutrition.getOrDefault("carbs", BigDecimal.ZERO))
+                            .fat(nutrition.getOrDefault("fat", BigDecimal.ZERO))
+                            .build())
+                    .build();
+
+            slots.add(slotResponse);
+
+            if (recipe.getCalories() != null) {
+                totalCalories = totalCalories.add(recipe.getCalories());
+            }
+            totalProtein = totalProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
+            totalCarbs = totalCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
+            totalFat = totalFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
+        }
+
+        response.setSlots(slots);
+        response.setNutritionSummary(NutritionSummaryResponse.builder()
+                .totalCalories(totalCalories)
+                .protein(totalProtein)
+                .carbs(totalCarbs)
+                .fat(totalFat)
+                .build());
+
+        log.info("Retrieved {} meal slots for date: {}, mealType: {}", slots.size(), date, mealType);
+
+        return response;
+    }
+
+    @Override
+    @Transactional
+    public UpdatedMealSlotResponse updateMealSlotRecipe(Long userId, Long mealSlotId,
+            UpdateMealSlotRecipeRequest request) {
+        log.info("Updating meal slot: {} for user: {} with recipe: {}", mealSlotId, userId, request.getRecipeId());
+
+        MealSlot mealSlot = mealSlotRepository.findById(mealSlotId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "Meal slot not found"));
+
+        MealDay mealDay = mealSlot.getMealDay();
+        MealPlan mealPlan = mealDay.getMealPlan();
+
+        if (!mealPlan.getUser().getUserId().equals(userId)) {
+            log.warn("Unauthorized access attempt: user {} trying to update slot of user {}",
+                    userId, mealPlan.getUser().getUserId());
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
+
+        Recipe newRecipe = recipeRepository.findById(request.getRecipeId())
+                .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
+
+        mealSlot.setRecipe(newRecipe);
+        MealSlot updatedMealSlot = mealSlotRepository.save(mealSlot);
+        log.info("Meal slot {} updated successfully with recipe {}", mealSlotId, request.getRecipeId());
+
+        NutritionSummaryResponse dayNutrition = calculateDayNutritionSummary(mealDay);
+
+        Map<String, BigDecimal> recipeNutrition = calculateRecipeNutrition(newRecipe);
+
+        UpdatedMealSlotResponse response = UpdatedMealSlotResponse.builder()
+                .mealSlotId(updatedMealSlot.getId())
+                .date(mealDay.getDate().toString())
+                .mealType(updatedMealSlot.getType())
+                .recipe(UpdatedMealSlotResponse.RecipeDetailResponse.builder()
+                        .recipeId(newRecipe.getRecipeId())
+                        .title(newRecipe.getTitle())
+                        .imageUrl(newRecipe.getImageUrl())
+                        .calories(newRecipe.getCalories())
+                        .nutrition(NutritionSummaryResponse.builder()
+                                .protein(recipeNutrition.getOrDefault("protein", BigDecimal.ZERO))
+                                .carbs(recipeNutrition.getOrDefault("carbs", BigDecimal.ZERO))
+                                .fat(recipeNutrition.getOrDefault("fat", BigDecimal.ZERO))
+                                .totalCalories(
+                                        newRecipe.getCalories() != null ? newRecipe.getCalories() : BigDecimal.ZERO)
+                                .build())
+                        .build())
+                .nutritionSummaryOfDay(dayNutrition)
+                .build();
+
+        return response;
+    }
+
+    private NutritionSummaryResponse calculateDayNutritionSummary(MealDay mealDay) {
+        BigDecimal totalCalories = BigDecimal.ZERO;
+        BigDecimal totalProtein = BigDecimal.ZERO;
+        BigDecimal totalCarbs = BigDecimal.ZERO;
+        BigDecimal totalFat = BigDecimal.ZERO;
+
+        for (MealSlot mealSlot : mealDay.getMealSlots()) {
+            Recipe recipe = mealSlot.getRecipe();
+
+            if (recipe.getCalories() != null) {
+                totalCalories = totalCalories.add(recipe.getCalories());
+            }
+
+            Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
+            totalProtein = totalProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
+            totalCarbs = totalCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
+            totalFat = totalFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
+        }
+
+        return NutritionSummaryResponse.builder()
+                .totalCalories(totalCalories)
+                .protein(totalProtein)
+                .carbs(totalCarbs)
+                .fat(totalFat)
+                .build();
     }
 }
