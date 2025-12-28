@@ -77,7 +77,7 @@ public class MealPlanController {
                                 .build());
         }
 
-        @PutMapping("/slots/{mealSlotId}")
+        @PatchMapping("/slots/{mealSlotId}")
         @Operation(summary = "Update recipe in a meal slot", description = "Replace the recipe in a meal slot with a new recipe. Returns updated slot info with daily nutrition summary.")
         @ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Meal slot updated successfully"),
