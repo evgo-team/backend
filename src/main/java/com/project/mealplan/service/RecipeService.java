@@ -45,4 +45,7 @@ public interface RecipeService {
     // Delete multiple recipes by their ids. Return the number of recipes actually deleted.
     // Non-existent ids are ignored. Operation should be performed in a transaction.
     int deleteRecipesByIds(List<Long> ids, DeleteRecipesDto body);
+    
+    // Get personalized recipe suggestions based on user profile, pantry, and preferences
+    List<RecipeShortResponse> getSuggestionRecipes(Long userId);
 }
