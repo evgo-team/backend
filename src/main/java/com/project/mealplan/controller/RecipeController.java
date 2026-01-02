@@ -11,6 +11,7 @@ import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.dtos.recipeCategory.response.RecipeCategoryDto;
 import com.project.mealplan.security.CurrentUser;
+import com.project.mealplan.security.jwt.SecurityUtil;
 import com.project.mealplan.service.RecipeCategoryService;
 import com.project.mealplan.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -200,5 +201,20 @@ public class RecipeController {
                                         recipeCategories);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/suggestion")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get suggestion recipe", description = "Get suggestion recipes by user profile")
+    public ResponseEntity<ApiResponse<List<RecipeShortResponse>>> getSuggestionRecipes() {
+
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        List<RecipeShortResponse> suggestions = recipeService.getSuggestionRecipes(currentUserId);
+
+        return ResponseEntity.ok(ApiResponse.<List<RecipeShortResponse>>builder()
+                .status(200)
+                .message("Suggestion recipes retrieved successfully")
+                .data(suggestions)
+                .build());
     }
 }

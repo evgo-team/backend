@@ -26,6 +26,8 @@ import com.project.mealplan.dtos.mealplan.response.WeeklyMealPlanResponse;
 import com.project.mealplan.entity.*;
 import com.project.mealplan.repository.*;
 import com.project.mealplan.service.MealPlanService;
+import com.project.mealplan.common.util.CalculateRecipeScore;
+import com.project.mealplan.common.util.CalculateDailyCalories;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +42,6 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final RecipeRepository recipeRepository;
     private final PantryRepository pantryRepository;
     private final MealSlotRepository mealSlotRepository;
-
-    // Scoring weights
-    private static final double CALORIE_WEIGHT = 0.5;
-    private static final double PANTRY_WEIGHT = 0.3;
-    private static final double FAVORITE_WEIGHT = 0.2;
 
     // Variety penalty for recipe repetition
     private static final double BASE_REPETITION_PENALTY = 0.7; // 70% penalty per overall use
@@ -78,7 +75,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         validateUserProfile(user);
 
         // 4. Calculate daily calorie target
-        BigDecimal dailyCalorieTarget = calculateDailyCalorieTarget(user);
+        BigDecimal dailyCalorieTarget = CalculateDailyCalories.calculateDailyCalorieTarget(user);
         log.info("Daily calorie target: {}", dailyCalorieTarget);
 
         // 5. Get user's pantry and favorites
@@ -161,7 +158,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
                     // Calculate score
                     double score = recipeScores.computeIfAbsent(selectedRecipe.getRecipeId(),
-                            id -> calculateRecipeScore(selectedRecipe, mealCalorieTarget,
+                            id -> CalculateRecipeScore.calculateRecipeScore(selectedRecipe, mealCalorieTarget,
                                     pantryIngredientIds, favoriteRecipeIds));
 
                     // Create response
@@ -258,55 +255,6 @@ public class MealPlanServiceImpl implements MealPlanService {
     }
 
     /**
-     * Calculate daily calorie target using Mifflin-St Jeor equation
-     */
-    private BigDecimal calculateDailyCalorieTarget(User user) {
-        BigDecimal weight = user.getWeight(); // kg
-        BigDecimal height = user.getHeight(); // cm
-        int age = user.getAge();
-
-        // BMR calculation
-        BigDecimal bmr;
-        if (user.getGender() != null && user.getGender().toString().equalsIgnoreCase("MALE")) {
-            // BMR (men) = 10 * weight + 6.25 * height - 5 * age + 5
-            bmr = weight.multiply(BigDecimal.TEN)
-                    .add(height.multiply(BigDecimal.valueOf(6.25)))
-                    .subtract(BigDecimal.valueOf(age * 5))
-                    .add(BigDecimal.valueOf(5));
-        } else {
-            // BMR (women) = 10 * weight + 6.25 * height - 5 * age - 161
-            bmr = weight.multiply(BigDecimal.TEN)
-                    .add(height.multiply(BigDecimal.valueOf(6.25)))
-                    .subtract(BigDecimal.valueOf(age * 5))
-                    .subtract(BigDecimal.valueOf(161));
-        }
-
-        // Activity multiplier (default to moderate = 1.55)
-        BigDecimal activityMultiplier = getActivityMultiplier(user.getActivityLevel().name());
-        BigDecimal tdee = bmr.multiply(activityMultiplier);
-
-        return tdee.setScale(0, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Get activity multiplier based on activity level
-     */
-    private BigDecimal getActivityMultiplier(String activityLevel) {
-        if (activityLevel == null) {
-            return BigDecimal.valueOf(1.55); // Moderate
-        }
-
-        return switch (activityLevel.toLowerCase()) {
-            case "sedentary" -> BigDecimal.valueOf(1.2);
-            case "light" -> BigDecimal.valueOf(1.375);
-            case "moderate" -> BigDecimal.valueOf(1.55);
-            case "active" -> BigDecimal.valueOf(1.725);
-            case "very_active" -> BigDecimal.valueOf(1.9);
-            default -> BigDecimal.valueOf(1.55);
-        };
-    }
-
-    /**
      * Get ingredient IDs from user's pantry
      */
     private Set<Long> getUserPantryIngredientIds(Long userId) {
@@ -354,7 +302,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
                     // 1. Get base quality score (0.0 - 1.0)
                     double baseScore = scoreCache.computeIfAbsent(recipeId,
-                            id -> calculateRecipeScore(recipe, targetCalories,
+                            id -> CalculateRecipeScore.calculateRecipeScore(recipe, targetCalories,
                                     pantryIngredientIds, favoriteRecipeIds));
 
                     // 2. Apply base repetition penalty (linear)
@@ -386,63 +334,6 @@ public class MealPlanServiceImpl implements MealPlanService {
                     return Math.max(0.0, adjustedScore); // Ensure non-negative
                 }))
                 .orElse(null);
-    }
-
-    /**
-     * Calculate recipe score based on calorie fit, pantry match, and favorite
-     * status
-     */
-    private double calculateRecipeScore(
-            Recipe recipe,
-            BigDecimal targetCalories,
-            Set<Long> pantryIngredientIds,
-            Set<Long> favoriteRecipeIds) {
-
-        // (A) Calorie Fit Score (50%)
-        double calorieScore = calculateCalorieScore(recipe.getCalories(), targetCalories);
-
-        // (B) Pantry Match Score (30%)
-        double pantryScore = calculatePantryScore(recipe, pantryIngredientIds);
-
-        // (C) Favorite Score (20%)
-        double favoriteScore = favoriteRecipeIds.contains(recipe.getRecipeId()) ? 1.0 : 0.0;
-
-        // Total score
-        double totalScore = CALORIE_WEIGHT * calorieScore
-                + PANTRY_WEIGHT * pantryScore
-                + FAVORITE_WEIGHT * favoriteScore;
-
-        return Math.max(0.0, Math.min(1.0, totalScore)); // Clamp to [0, 1]
-    }
-
-    /**
-     * Calculate calorie fit score
-     */
-    private double calculateCalorieScore(BigDecimal recipeCalories, BigDecimal targetCalories) {
-        if (recipeCalories == null || targetCalories.compareTo(BigDecimal.ZERO) == 0) {
-            return 0.5; // Neutral score
-        }
-
-        BigDecimal diff = recipeCalories.subtract(targetCalories).abs();
-        BigDecimal ratio = diff.divide(targetCalories, 4, RoundingMode.HALF_UP);
-
-        double score = 1.0 - ratio.doubleValue();
-        return Math.max(0.0, Math.min(1.0, score));
-    }
-
-    /**
-     * Calculate pantry match score
-     */
-    private double calculatePantryScore(Recipe recipe, Set<Long> pantryIngredientIds) {
-        if (recipe.getIngredients().isEmpty()) {
-            return 0.0;
-        }
-
-        long matchedCount = recipe.getIngredients().stream()
-                .filter(ri -> pantryIngredientIds.contains(ri.getIngredient().getId()))
-                .count();
-
-        return (double) matchedCount / recipe.getIngredients().size();
     }
 
     /**
