@@ -168,6 +168,8 @@ public class MealPlanServiceImpl implements MealPlanService {
                             .title(selectedRecipe.getTitle())
                             .calories(selectedRecipe.getCalories())
                             .score(score)
+                            .consumed(false) // New meal slots default to not consumed
+                            .consumedAt(null)
                             .build();
 
                     mealsMap.computeIfAbsent(mealType, k -> new ArrayList<>()).add(slotResponse);
@@ -434,6 +436,8 @@ public class MealPlanServiceImpl implements MealPlanService {
                             .carbs(nutrition.getOrDefault("carbs", BigDecimal.ZERO))
                             .fat(nutrition.getOrDefault("fat", BigDecimal.ZERO))
                             .build())
+                    .consumed(mealSlot.getConsumed())
+                    .consumedAt(mealSlot.getConsumedAt())
                     .build();
 
             slots.add(slotResponse);

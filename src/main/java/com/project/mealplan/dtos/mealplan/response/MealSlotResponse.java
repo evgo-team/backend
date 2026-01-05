@@ -1,6 +1,7 @@
 package com.project.mealplan.dtos.mealplan.response;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +18,6 @@ public class MealSlotResponse {
     private String title;
     private BigDecimal calories;
     private Double score;
+    private Boolean consumed;
+    private LocalDateTime consumedAt;
 }
