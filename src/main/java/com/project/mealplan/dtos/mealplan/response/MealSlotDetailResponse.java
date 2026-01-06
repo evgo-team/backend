@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MealSlotDetailResponse {
     private Long mealSlotId;
+    private Long mealPlanId;
     private Long recipeId;
     private String title;
     private String imageUrl;

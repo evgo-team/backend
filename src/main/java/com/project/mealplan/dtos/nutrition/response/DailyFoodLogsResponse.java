@@ -1,5 +1,6 @@
 package com.project.mealplan.dtos.nutrition.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,4 +21,10 @@ public class DailyFoodLogsResponse {
     private LocalDate date;
     private List<FoodLogResponse> foodLogs;
     private int totalEntries;
+
+    // Total nutrition for the day (from food logs only)
+    private BigDecimal totalCalories;
+    private BigDecimal totalProtein;
+    private BigDecimal totalCarbs;
+    private BigDecimal totalFat;
 }

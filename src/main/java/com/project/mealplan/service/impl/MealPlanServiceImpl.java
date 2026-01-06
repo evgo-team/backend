@@ -485,6 +485,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
             MealSlotDetailResponse slotResponse = MealSlotDetailResponse.builder()
                     .mealSlotId(mealSlot.getId())
+                    .mealPlanId(mealPlan.getId())
                     .recipeId(recipe.getRecipeId())
                     .title(recipe.getTitle())
                     .imageUrl(recipe.getImageUrl())
