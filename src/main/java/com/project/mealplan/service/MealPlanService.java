@@ -14,4 +14,6 @@ public interface MealPlanService {
     MealSlotListResponse getMealSlotsByDateAndMealType(Long userId, LocalDate date, MealType mealType);
 
     UpdatedMealSlotResponse updateMealSlotRecipe(Long userId, Long mealSlotId, UpdateMealSlotRecipeRequest request);
+
+    WeeklyMealPlanResponse getWeeklyMealPlan(Long userId, LocalDate date);
 }

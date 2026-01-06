@@ -56,6 +56,25 @@ public class MealPlanController {
                                 .build());
         }
 
+        @GetMapping
+        @Operation(summary = "Get weekly meal plan", description = "Get the weekly meal plan for the current user containing the specified date. If date is not provided, defaults to current date.")
+        public ResponseEntity<ApiResponse<WeeklyMealPlanResponse>> getWeeklyMealPlan(
+                        @Parameter(description = "Date in ISO yyyy-MM-dd format to find the meal plan for") @RequestParam(required = false) LocalDate date) {
+
+                Long currentUserId = SecurityUtil.getCurrentUserId();
+                LocalDate targetDate = (date != null) ? date : LocalDate.now();
+
+                WeeklyMealPlanResponse response = mealPlanService.getWeeklyMealPlan(
+                                currentUserId,
+                                targetDate);
+
+                return ResponseEntity.ok(ApiResponse.<WeeklyMealPlanResponse>builder()
+                                .status(200)
+                                .message("Weekly meal plan retrieved successfully")
+                                .data(response)
+                                .build());
+        }
+
         @GetMapping("/slot")
         public ResponseEntity<ApiResponse<MealSlotListResponse>> getMealSlotsByDateAndMealType(
                         @Parameter(description = "Date in ISO yyyy-MM-dd format", required = true) @RequestParam(required = true) LocalDate date,
