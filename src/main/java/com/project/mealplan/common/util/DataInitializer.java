@@ -1202,6 +1202,7 @@ public class DataInitializer {
                  * ----------------- Recipe 12: Cơm chiên Dương Châu -----------------
                  */
                 Recipe comChien = new Recipe();
+                comChien.setCreatedBy(admin);
                 comChien.setTitle("Yangzhou Fried Rice");
                 comChien.setDescription(
                                 "Fluffy, golden fried rice combined with eggs, vegetables and Chinese sausage (using pork as substitute).");
