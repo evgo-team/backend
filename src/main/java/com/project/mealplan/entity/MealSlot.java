@@ -1,5 +1,7 @@
 package com.project.mealplan.entity;
 
+import java.time.LocalDateTime;
+
 import com.project.mealplan.common.enums.MealType;
 
 import jakarta.persistence.Column;
@@ -43,4 +45,17 @@ public class MealSlot {
 
     @Column
     private Double quantity;
+
+    /**
+     * Indicates whether the user has actually consumed this meal.
+     * Only consumed meals count towards nutrition tracking.
+     */
+    @Column(nullable = false)
+    private Boolean consumed = false;
+
+    /**
+     * Timestamp when the meal was marked as consumed.
+     */
+    @Column(name = "consumed_at")
+    private LocalDateTime consumedAt;
 }

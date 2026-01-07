@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MealSlotResponse {
+public class MealSlotDetailResponse {
     private Long mealSlotId;
+    private Long mealPlanId;
     private Long recipeId;
     private String title;
+    private String imageUrl;
     private BigDecimal calories;
-    private Double score;
+    private NutritionDetailResponse nutrition;
     private Boolean consumed;
     private LocalDateTime consumedAt;
 }

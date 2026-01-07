@@ -92,6 +92,12 @@ public class DataInitializer {
                 user.setStatus(UserStatus.ACTIVE);
                 user.setRoles(Set.of(userRole));
 
+                user.setAge(25);
+                user.setWeight(new BigDecimal("60"));
+                user.setHeight(new BigDecimal("165"));
+                user.setGender(Gender.FEMALE);
+                user.setActivityLevel(ActivityLevel.MODERATE);
+
                 userRepository.saveAll(List.of(admin, user));
 
                 System.out.println("Default users initialized: admin@example.com / user@example.com");
@@ -923,7 +929,7 @@ public class DataInitializer {
                                     4. Combine all and serve.
                                 """);
                 chickenRice.setCookingTimeMinutes(30);
-                chickenRice.setImageUrl("https://example.com/chicken_rice_bowl.jpg");
+                chickenRice.setImageUrl("https://modernmealmakeover.com/wp-content/uploads/2020/10/IMG_6548-4.jpg");
                 chickenRice.setStatus(RecipeStatus.PUBLISHED);
                 chickenRice.setRole(MealRole.MAIN_DISH);
                 chickenRice.setMealType(MealType.LUNCH);
@@ -945,7 +951,7 @@ public class DataInitializer {
                                     3. Serve with rice.
                                 """);
                 broccoliStirFry.setCookingTimeMinutes(20);
-                broccoliStirFry.setImageUrl("https://example.com/broccoli_stir_fry.jpg");
+                broccoliStirFry.setImageUrl("https://tse3.mm.bing.net/th/id/OIP.XMHmcJmCzay3pdxzhXoYsAAAAA?rs=1&pid=ImgDetMain&o=7&rm=3");
                 broccoliStirFry.setStatus(RecipeStatus.PUBLISHED);
                 broccoliStirFry.setRole(MealRole.SIDE_DISH);
                 broccoliStirFry.setMealType(MealType.DINNER);
@@ -970,7 +976,7 @@ public class DataInitializer {
                                     5. Serve over cooked pasta (e.g., rice, for this demo).
                                 """);
                 bolognese.setCookingTimeMinutes(45);
-                bolognese.setImageUrl("https://images.unsplash.com/photo-1595295333158-e5e3c36b9b6e");
+                bolognese.setImageUrl("https://res-console.cloudinary.com/dmfvnmpuq/thumbnails/v1/image/upload/v1767460533/NDU2ZGY5MjgtNTViNy00ZWQxLWEyZDQtYzExMWE5ZTY1Nzkx/drilldown");
                 bolognese.setStatus(RecipeStatus.PUBLISHED);
                 bolognese.setRole(MealRole.MAIN_DISH);
                 bolognese.setMealType(MealType.DINNER);
@@ -996,7 +1002,7 @@ public class DataInitializer {
                                     4. Drizzle with olive oil.
                                 """);
                 chickenSalad.setCookingTimeMinutes(15);
-                chickenSalad.setImageUrl("https://images.unsplash.com/photo-1512852939781-939cedf85c41");
+                chickenSalad.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767460759/26973a8d-f4ba-4641-aaf5-814ad39d637d.png");
                 chickenSalad.setStatus(RecipeStatus.PUBLISHED);
                 chickenSalad.setRole(MealRole.MAIN_DISH);
                 chickenSalad.setMealType(MealType.LUNCH);
@@ -1022,7 +1028,7 @@ public class DataInitializer {
                                     4. Spread on a baking sheet and roast for 20-25 minutes.
                                 """);
                 roastedVegs.setCookingTimeMinutes(30);
-                roastedVegs.setImageUrl("https://images.unsplash.com/photo-1518977822511-7f0d7456c3e8");
+                roastedVegs.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767460629/33ad6f13-efa0-409e-a931-877596695522.png");
                 roastedVegs.setStatus(RecipeStatus.PUBLISHED);
                 roastedVegs.setRole(MealRole.SIDE_DISH);
                 roastedVegs.setMealType(MealType.DINNER);
@@ -1039,17 +1045,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 7: Pho Bo (Pho) ----------------- */
                 Recipe phoBo = new Recipe();
                 phoBo.setCreatedBy(admin);
-                phoBo.setTitle("Phở Bò Hà Nội");
-                phoBo.setDescription("Món phở bò truyền thống với nước dùng trong, ngọt thanh.");
+                phoBo.setTitle("Hanoi Beef Pho");
+                phoBo.setDescription("Traditional beef noodle soup with clear, sweet broth.");
                 phoBo.setInstructions("""
-                                    1. Rửa sạch bắp bò. Nướng gừng và hành tím.
-                                    2. Cho xương bò, bắp bò, gừng, hành nướng, hoa hồi, quế vào nồi nước.
-                                    3. Hầm ở lửa nhỏ trong 2-3 giờ. Nêm nếm với muối, nước mắm.
-                                    4. Trụng bánh phở, giá đỗ.
-                                    5. Thái mỏng bắp bò, xếp vào bát cùng bánh phở, hành lá, ngò rí. Chan nước dùng.
+                                    1. Wash beef shank. Grill ginger and shallots.
+                                    2. Put beef bones, beef shank, grilled ginger, grilled shallots, star anise, and cinnamon into a pot of water.
+                                    3. Simmer on low heat for 2-3 hours. Season with salt and fish sauce.
+                                    4. Blanch pho noodles and bean sprouts.
+                                    5. Thinly slice the beef shank, arrange in a bowl with noodles, green onions, and cilantro. Pour in the broth.
                                 """);
                 phoBo.setCookingTimeMinutes(180);
-                phoBo.setImageUrl("https://images.unsplash.com/photo-1568899283083-34d13c7f66cb");
+                phoBo.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461337/58ce753f-159d-42e1-8551-6d73563b1040.png");
                 phoBo.setStatus(RecipeStatus.PUBLISHED);
                 phoBo.setRole(MealRole.MAIN_DISH);
                 phoBo.setMealType(MealType.BREAKFAST);
@@ -1073,16 +1079,16 @@ public class DataInitializer {
                  */
                 Recipe gaXaoSaOt = new Recipe();
                 gaXaoSaOt.setCreatedBy(admin);
-                gaXaoSaOt.setTitle("Gà xào sả ớt");
-                gaXaoSaOt.setDescription("Thịt gà mềm thơm, cay nồng vị sả ớt, đậm đà đưa cơm.");
+                gaXaoSaOt.setTitle("Lemongrass Chili Chicken");
+                gaXaoSaOt.setDescription("Tender chicken, spicy lemongrass and chili flavor, savory and perfect with rice.");
                 gaXaoSaOt.setInstructions("""
-                                    1. Thái mỏng ức gà. Băm nhỏ sả, ớt, tỏi.
-                                    2. Phi thơm tỏi, sả, ớt trong chảo dầu.
-                                    3. Cho thịt gà vào xào săn.
-                                    4. Nêm nếm với nước mắm, đường, salt. Đảo đều đến khi gà chín.
+                                    1. Thinly slice chicken breast. Mince lemongrass, chili, and garlic.
+                                    2. Sauté garlic, lemongrass, and chili in oil until fragrant.
+                                    3. Add chicken and stir-fry until firm.
+                                    4. Season with fish sauce, sugar, and salt. Stir well until chicken is cooked.
                                 """);
                 gaXaoSaOt.setCookingTimeMinutes(20);
-                gaXaoSaOt.setImageUrl("https://images.unsplash.com/photo-1616383686121-b1e4c7e6c4f0"); // Ảnh minh họa
+                gaXaoSaOt.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461384/b9be6baf-1352-4edd-b7f0-655b6349252c.png"); // Ảnh minh họa
                 gaXaoSaOt.setStatus(RecipeStatus.PUBLISHED);
                 gaXaoSaOt.setRole(MealRole.MAIN_DISH);
                 gaXaoSaOt.setMealType(MealType.DINNER);
@@ -1103,16 +1109,16 @@ public class DataInitializer {
                  */
                 Recipe rauMuongXaoToi = new Recipe();
                 rauMuongXaoToi.setCreatedBy(admin);
-                rauMuongXaoToi.setTitle("Rau muống xào tỏi");
-                rauMuongXaoToi.setDescription("Món rau quốc dân, xanh giòn, thơm nức mùi tỏi.");
+                rauMuongXaoToi.setTitle("Stir-fried Water Spinach with Garlic");
+                rauMuongXaoToi.setDescription("A national vegetable dish, green and crunchy, fragrant with garlic.");
                 rauMuongXaoToi.setInstructions("""
-                                    1. Nhặt và rửa sạch rau muống. Đập dập tỏi.
-                                    2. Phi thơm tỏi với dầu.
-                                    3. Vặn lửa lớn, cho rau muống vào đảo nhanh tay.
-                                    4. Nêm nếm với nước mắm, salt, đường. Tắt bếp.
+                                    1. Pick and wash water spinach. Crush garlic.
+                                    2. Sauté garlic with oil until fragrant.
+                                    3. Turn up heat to high, add water spinach and stir-fry quickly.
+                                    4. Season with fish sauce, salt, and sugar. Turn off heat.
                                 """);
                 rauMuongXaoToi.setCookingTimeMinutes(10);
-                rauMuongXaoToi.setImageUrl("https://images.unsplash.com/photo-1628033678857-01765c9b68c9"); // Ảnh minh
+                rauMuongXaoToi.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461429/7f1795cd-0087-482e-a37f-61a007453ca4.png"); // Ảnh minh
                                                                                                             // họa
                 rauMuongXaoToi.setStatus(RecipeStatus.PUBLISHED);
                 rauMuongXaoToi.setRole(MealRole.SIDE_DISH);
@@ -1136,17 +1142,17 @@ public class DataInitializer {
                  */
                 Recipe dauHuSotCa = new Recipe();
                 dauHuSotCa.setCreatedBy(admin);
-                dauHuSotCa.setTitle("Đậu hũ sốt cà chua");
-                dauHuSotCa.setDescription("Đậu hũ mềm béo trong nước sốt cà chua đậm đà, ăn cùng cơm trắng.");
+                dauHuSotCa.setTitle("Tofu in Tomato Sauce");
+                dauHuSotCa.setDescription("Soft and creamy tofu in rich tomato sauce, served with white rice.");
                 dauHuSotCa.setInstructions("""
-                                    1. Cắt đậu hũ thành miếng vừa ăn, chiên vàng đều.
-                                    2. Băm nhỏ cà chua, phi thơm hành/tỏi.
-                                    3. Cho cà chua vào xào nhuyễn, thêm nước, nêm nếm mắm, muối, đường.
-                                    4. Cho đậu hũ đã chiên vào, om lửa nhỏ 10 phút.
-                                    5. Rắc hành lá, ngò rí và tắt bếp.
+                                    1. Cut tofu into bite-sized pieces, fry until golden brown.
+                                    2. Mince tomatoes, sauté shallots/garlic until fragrant.
+                                    3. Add tomatoes and stir-fry until soft, add water, season with fish sauce, salt, and sugar.
+                                    4. Add fried tofu, simmer on low heat for 10 minutes.
+                                    5. Sprinkle with green onions, cilantro and turn off heat.
                                 """);
                 dauHuSotCa.setCookingTimeMinutes(25);
-                dauHuSotCa.setImageUrl("https://images.unsplash.com/photo-1588143224744-3684e5f76e76"); // Ảnh minh họa
+                dauHuSotCa.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461491/5e3853b5-95e1-4f86-9911-5758dea81924.png"); // Ảnh minh họa
                 dauHuSotCa.setStatus(RecipeStatus.PUBLISHED);
                 dauHuSotCa.setRole(MealRole.MAIN_DISH);
                 dauHuSotCa.setMealType(MealType.DINNER);
@@ -1165,16 +1171,16 @@ public class DataInitializer {
                  */
                 Recipe nemRan = new Recipe();
                 nemRan.setCreatedBy(admin);
-                nemRan.setTitle("Nem rán (Chả giò)");
-                nemRan.setDescription("Vỏ giòn rụm, nhân thịt và rau củ thơm lừng, chấm nước mắm chua ngọt.");
+                nemRan.setTitle("Fried Spring Rolls (Nem Ran)");
+                nemRan.setDescription("Crispy skin, fragrant meat and vegetable filling, dipped in sweet and sour fish sauce.");
                 nemRan.setInstructions("""
-                                        1. Băm nhỏ thịt heo, nấm mèo, cà rốt. Trộn đều với trứng, giá đỗ, miến (nếu có).
-                                        2. Nêm nếm với nước mắm, salt, đường.
-                                        3. Trải bánh tráng, cho nhân vào và cuốn tròn.
-                                        4. Chiên ngập dầu ở lửa vừa đến khi vàng giòn.
+                                        1. Mince pork, wood ear mushrooms, carrots. Mix well with eggs, bean sprouts, vermicelli (if any).
+                                        2. Season with fish sauce, salt, and sugar.
+                                        3. Spread rice paper, add filling and roll up.
+                                        4. Deep fry over medium heat until golden and crispy.
                                 """);
                 nemRan.setCookingTimeMinutes(40);
-                nemRan.setImageUrl("https://images.unsplash.com/photo-1534939223126-b8f04f4a56d1");
+                nemRan.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461581/5801653a-23b7-4adf-9583-b44bf814b6a3.png");
                 nemRan.setStatus(RecipeStatus.PUBLISHED);
                 nemRan.setRole(MealRole.MAIN_DISH);
                 nemRan.setMealType(MealType.LUNCH);
@@ -1196,18 +1202,19 @@ public class DataInitializer {
                  * ----------------- Recipe 12: Cơm chiên Dương Châu -----------------
                  */
                 Recipe comChien = new Recipe();
-                comChien.setTitle("Cơm chiên Dương Châu");
+                comChien.setCreatedBy(admin);
+                comChien.setTitle("Yangzhou Fried Rice");
                 comChien.setDescription(
-                                "Cơm chiên tơi xốp, vàng ươm, kết hợp với trứng, rau củ và lạp xưởng (dùng tạm thịt heo).");
+                                "Fluffy, golden fried rice combined with eggs, vegetables and Chinese sausage (using pork as substitute).");
                 comChien.setInstructions("""
-                                    1. Cơm trắng để nguội. Đánh tan trứng.
-                                    2. Phi thơm tỏi/hành, cho trứng vào đánh tơi.
-                                    3. Cho cơm nguội vào rang ở lửa lớn, đảo đều tay.
-                                    4. Thêm đậu Hà Lan, cà rốt (đã luộc sơ), và thịt.
-                                    5. Nêm nếm với nước tương (soy sauce), salt, đường. Rắc hành lá.
+                                    1. Let white rice cool. Beat eggs.
+                                    2. Sauté garlic/shallots until fragrant, add eggs and scramble.
+                                    3. Add cold rice and stir-fry over high heat, stirring constantly.
+                                    4. Add peas, carrots (blanched), and meat.
+                                    5. Season with soy sauce, salt, and sugar. Sprinkle with green onions.
                                 """);
                 comChien.setCookingTimeMinutes(15);
-                comChien.setImageUrl("https://images.unsplash.com/photo-1599518559032-6013a7c36b85");
+                comChien.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461715/ea21fb5e-ffb0-4a19-8fcb-0e8d374b6914.png");
                 comChien.setStatus(RecipeStatus.PUBLISHED);
                 comChien.setRole(MealRole.MAIN_DISH);
                 comChien.setMealType(MealType.LUNCH);
@@ -1230,17 +1237,17 @@ public class DataInitializer {
                  */
                 Recipe thitKho = new Recipe();
                 thitKho.setCreatedBy(admin);
-                thitKho.setTitle("Thịt kho trứng");
-                thitKho.setDescription("Món ăn ngày Tết cổ truyền, thịt ba rọi mềm rục, trứng thấm vị đậm đà.");
+                thitKho.setTitle("Braised Pork with Eggs");
+                thitKho.setDescription("Traditional Tet dish, tender pork belly, eggs absorbing rich flavor.");
                 thitKho.setInstructions("""
-                                    1. Thái thịt ba rọi thành miếng vuông, ướp với nước mắm, đường, tỏi, hành.
-                                    2. Luộc trứng, bóc vỏ.
-                                    3. Thắng đường làm nước màu (caramel).
-                                    4. Cho thịt vào đảo săn, sau đó cho nước màu, nước dừa tươi vào.
-                                    5. Thêm trứng đã luộc. Kho ở lửa nhỏ 1-2 giờ cho đến khi thịt mềm.
+                                    1. Cut pork belly into square pieces, marinate with fish sauce, sugar, garlic, and shallots.
+                                    2. Boil eggs, peel shells.
+                                    3. Caramelize sugar to make color water.
+                                    4. Stir-fry meat until firm, then add caramel water and fresh coconut water.
+                                    5. Add boiled eggs. Braise on low heat for 1-2 hours until meat is tender.
                                 """);
                 thitKho.setCookingTimeMinutes(120);
-                thitKho.setImageUrl("https://images.unsplash.com/photo-1568205763539-01c0c60d110d"); // Ảnh minh họa
+                thitKho.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461788/e4dbe3ff-26e8-4611-a129-ca70b74271f6.png"); // Ảnh minh họa
                 thitKho.setStatus(RecipeStatus.PUBLISHED);
                 thitKho.setRole(MealRole.MAIN_DISH);
                 thitKho.setMealType(MealType.DINNER);
@@ -1256,17 +1263,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 14: Bo Luc Lac (Shaking Beef) ----------------- */
                 Recipe boLucLac = new Recipe();
                 boLucLac.setCreatedBy(admin);
-                boLucLac.setTitle("Bò lúc lắc");
-                boLucLac.setDescription("Bò thăn thái hạt lựu, xào lửa lớn với hành tây, ớt chuông, ăn kèm salad.");
+                boLucLac.setTitle("Shaking Beef (Bo Luc Lac)");
+                boLucLac.setDescription("Diced beef tenderloin, stir-fried over high heat with onions and bell peppers, served with salad.");
                 boLucLac.setInstructions("""
-                                    1. Thái bò thăn thành khối vuông, ướp với dầu hào, nước tương, tỏi.
-                                    2. Thái hành tây, cà chua.
-                                    3. Phi tỏi thơm, cho bò vào xào nhanh ở lửa lớn (lúc lắc chảo).
-                                    4. Thêm hành tây, đảo nhanh rồi tắt bếp.
-                                    5. Dọn ra đĩa salad (rau xà lách, cà chua).
+                                    1. Cut beef tenderloin into cubes, marinate with oyster sauce, soy sauce, and garlic.
+                                    2. Slice onions and tomatoes.
+                                    3. Sauté garlic until fragrant, add beef and stir-fry quickly over high heat (shake the pan).
+                                    4. Add onions, stir quickly then turn off heat.
+                                    5. Serve on a salad plate (lettuce, tomato).
                                 """);
                 boLucLac.setCookingTimeMinutes(20);
-                boLucLac.setImageUrl("https://images.unsplash.com/photo-1629503507663-01a61c73c68b"); // Ảnh minh họa
+                boLucLac.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461834/b17a7934-15b7-4157-b72e-b53f791098ab.png"); // Ảnh minh họa
                 boLucLac.setStatus(RecipeStatus.PUBLISHED);
                 boLucLac.setRole(MealRole.MAIN_DISH);
                 boLucLac.setMealType(MealType.DINNER);
@@ -1287,19 +1294,19 @@ public class DataInitializer {
                  */
                 Recipe canhChua = new Recipe();
                 canhChua.setCreatedBy(admin);
-                canhChua.setTitle("Canh chua cá lóc");
+                canhChua.setTitle("Sour Fish Soup (Canh Chua)");
                 canhChua.setDescription(
-                                "Canh cá vị chua thanh từ me, ngọt từ dứa (dùng tạm cà chua), thơm mùi rau nêm.");
+                                "Fish soup with sour taste from tamarind, sweet from pineapple (using tomato as substitute), fragrant herbs.");
                 canhChua.setInstructions("""
-                                    1. Sơ chế cá, ướp với nước mắm.
-                                    2. Nấu sôi nước, cho nước me (tamarind paste) vào.
-                                    3. Cho cá vào nấu chín.
-                                    4. Thêm cà chua, đậu bắp, giá đỗ.
-                                    5. Nêm nếm mắm, muối, đường cho vừa vị chua-mặn-ngọt.
-                                    6. Tắt bếp, thêm hành lá, ngò rí, tỏi phi.
+                                    1. Prepare fish, marinate with fish sauce.
+                                    2. Boil water, add tamarind paste.
+                                    3. Add fish and cook until done.
+                                    4. Add tomatoes, okra, bean sprouts.
+                                    5. Season with fish sauce, salt, sugar to balance sour-salty-sweet taste.
+                                    6. Turn off heat, add green onions, cilantro, fried garlic.
                                 """);
                 canhChua.setCookingTimeMinutes(30);
-                canhChua.setImageUrl("https://images.unsplash.com/photo-1628033678857-01765c9b68c9"); // Ảnh minh họa
+                canhChua.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461935/0122d5be-df80-45f9-9fb5-517dba0b28f2.png"); // Ảnh minh họa
                 canhChua.setStatus(RecipeStatus.PUBLISHED);
                 canhChua.setRole(MealRole.SOUP);
                 canhChua.setMealType(MealType.DINNER);
@@ -1319,17 +1326,17 @@ public class DataInitializer {
                  */
                 Recipe goiCuon = new Recipe();
                 goiCuon.setCreatedBy(admin);
-                goiCuon.setTitle("Gỏi cuốn tôm thịt");
-                goiCuon.setDescription("Món khai vị thanh mát, cuốn bánh tráng với bún, rau sống, tôm, thịt.");
+                goiCuon.setTitle("Fresh Spring Rolls with Shrimp and Pork");
+                goiCuon.setDescription("Refreshing appetizer, rice paper rolls with vermicelli, fresh herbs, shrimp, and pork.");
                 goiCuon.setInstructions("""
-                                        1. Luộc chín tôm và thịt ba rọi. Thái mỏng thịt, chẻ đôi tôm.
-                                        2. Trụng sơ bún (rice noodles).
-                                        3. Nhúng bánh tráng (rice paper) vào nước cho mềm.
-                                        4. Trải bánh tráng, xếp rau xà lách, ngò rí, bún, thịt, tôm lên trên.
-                                        5. Cuốn chặt tay. Ăn kèm tương chấm (đậu phộng).
+                                        1. Boil shrimp and pork belly. Thinly slice pork, split shrimp in half.
+                                        2. Blanch rice noodles.
+                                        3. Dip rice paper in water to soften.
+                                        4. Spread rice paper, arrange lettuce, cilantro, noodles, pork, and shrimp on top.
+                                        5. Roll tightly. Serve with dipping sauce (peanut sauce).
                                 """);
                 goiCuon.setCookingTimeMinutes(25);
-                goiCuon.setImageUrl("https://images.unsplash.com/photo-1512152272829-e3139592d56f");
+                goiCuon.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767461940/eb222bee-bd3b-4e2b-a856-6f8635aeff0b.png");
                 goiCuon.setStatus(RecipeStatus.PUBLISHED);
                 goiCuon.setRole(MealRole.SIDE_DISH);
                 goiCuon.setMealType(MealType.SNACK);
@@ -1350,17 +1357,17 @@ public class DataInitializer {
                 // /* ----------------- Recipe 17: Bun Bo Hue ----------------- */
                 Recipe bunBoHue = new Recipe();
                 bunBoHue.setCreatedBy(admin);
-                bunBoHue.setTitle("Bún bò Huế");
-                bunBoHue.setDescription("Nước dùng đậm đà, cay nồng vị sả và mắm ruốc đặc trưng của Huế.");
+                bunBoHue.setTitle("Hue Beef Noodle Soup (Bun Bo Hue)");
+                bunBoHue.setDescription("Rich broth, spicy lemongrass flavor and characteristic Hue shrimp paste.");
                 bunBoHue.setInstructions(
                                 """
-                                                    1. Hầm bắp bò, giò heo với sả đập dập.
-                                                    2. Phi thơm sả, tỏi, ớt, sau đó thêm mắm ruốc (đã pha loãng) vào xào.
-                                                    3. Cho hỗn hợp sả ớt vào nồi nước hầm, nêm nếm mắm, muối, đường.
-                                                    4. Trụng bún, xếp thịt, giò heo, rắc hành lá. Chan nước dùng và thêm sa tế (chili oil).
+                                                    1. Stew beef shank and pork hock with crushed lemongrass.
+                                                    2. Sauté lemongrass, garlic, chili, then add diluted shrimp paste and stir-fry.
+                                                    3. Add the lemongrass chili mixture to the stew pot, season with fish sauce, salt, and sugar.
+                                                    4. Blanch noodles, arrange meat, pork hock, sprinkle green onions. Pour broth and add chili oil.
                                                 """);
                 bunBoHue.setCookingTimeMinutes(150);
-                bunBoHue.setImageUrl("https://images.unsplash.com/photo-1568899283083-34d13c7f66cb"); // Dùng lại ảnh
+                bunBoHue.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462093/cf7a8e25-b5eb-4b4d-b1ea-e40c012ce88b.png"); // Dùng lại ảnh
                                                                                                       // Phở
                 bunBoHue.setStatus(RecipeStatus.PUBLISHED);
                 bunBoHue.setRole(MealRole.MAIN_DISH);
@@ -1380,17 +1387,17 @@ public class DataInitializer {
                 // */
                 Recipe comTam = new Recipe();
                 comTam.setCreatedBy(admin);
-                comTam.setTitle("Cơm tấm sườn nướng");
-                comTam.setDescription("Sườn cốt lết nướng mật ong thơm lừng, ăn kèm cơm tấm và nước mắm chua ngọt.");
+                comTam.setTitle("Broken Rice with Grilled Pork Chop");
+                comTam.setDescription("Fragrant honey-grilled pork chop, served with broken rice and sweet and sour fish sauce.");
                 comTam.setInstructions("""
-                                    1. Sườn cốt lết ướp với nước mắm, mật ong, tỏi, hành.
-                                    2. Nướng sườn trên than hoặc lò nướng cho đến khi xém vàng.
-                                    3. Nấu cơm tấm.
-                                    4. Pha nước mắm chua ngọt (nước mắm, đường, chanh/giấm, tỏi, ớt).
-                                    5. Dọn cơm, sườn, mỡ hành (green onion + oil), và nước mắm.
+                                    1. Marinate pork chops with fish sauce, honey, garlic, and shallots.
+                                    2. Grill chops over charcoal or in an oven until charred and golden.
+                                    3. Cook broken rice.
+                                    4. Make sweet and sour fish sauce (fish sauce, sugar, lemon/vinegar, garlic, chili).
+                                    5. Serve rice, chops, scallion oil (green onion + oil), and fish sauce.
                                 """);
                 comTam.setCookingTimeMinutes(45);
-                comTam.setImageUrl("https://images.unsplash.com/photo-1596279610119-a1c2de6062a4"); // Ảnh minh họa
+                comTam.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462162/7ed9b789-55c1-4541-8fc1-f0a835e9b0af.png"); // Ảnh minh họa
                 comTam.setStatus(RecipeStatus.PUBLISHED);
                 comTam.setRole(MealRole.MAIN_DISH);
                 comTam.setMealType(MealType.LUNCH);
@@ -1409,18 +1416,18 @@ public class DataInitializer {
                  */
                 Recipe supGaNgo = new Recipe();
                 supGaNgo.setCreatedBy(admin);
-                supGaNgo.setTitle("Súp gà ngô non");
-                supGaNgo.setDescription("Món súp khai vị thanh ngọt, sánh nhẹ, với gà xé và hạt ngô.");
+                supGaNgo.setTitle("Chicken Corn Soup");
+                supGaNgo.setDescription("Sweet and light appetizer soup, slightly thick, with shredded chicken and corn kernels.");
                 supGaNgo.setInstructions("""
-                                    1. Luộc ức gà, giữ lại nước dùng. Xé nhỏ thịt gà.
-                                    2. Cho ngô ngọt và gà xé vào nước dùng, đun sôi.
-                                    3. Nêm nếm với salt, đường.
-                                    4. Pha bột bắp (cornstarch) với nước, đổ từ từ vào nồi, khuấy đều cho súp sánh lại.
-                                    5. Đánh tan trứng, đổ từ từ vào súp tạo vân.
-                                    6. Rắc hành lá, ngò rí và tiêu.
+                                    1. Boil chicken breast, keep the broth. Shred the chicken.
+                                    2. Add sweet corn and shredded chicken to the broth, bring to a boil.
+                                    3. Season with salt and sugar.
+                                    4. Mix cornstarch with water, pour slowly into the pot, stirring well to thicken the soup.
+                                    5. Beat eggs, pour slowly into the soup to create ribbons.
+                                    6. Sprinkle with green onions, cilantro, and pepper.
                                 """);
                 supGaNgo.setCookingTimeMinutes(25);
-                supGaNgo.setImageUrl("https://images.unsplash.com/photo-1596797038530-2c05c1d44f33"); // Ảnh minh họa
+                supGaNgo.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462215/149fc974-771b-4f0d-868b-80ef8bfd1ab2.png"); // Ảnh minh họa
                 supGaNgo.setStatus(RecipeStatus.PUBLISHED);
                 supGaNgo.setRole(MealRole.SOUP);
                 supGaNgo.setMealType(MealType.SNACK);
@@ -1437,19 +1444,19 @@ public class DataInitializer {
                 /* ----------------- Recipe 20: Banh Flan (Caramel Custard) ----------------- */
                 Recipe banhFlan = new Recipe();
                 banhFlan.setCreatedBy(admin);
-                banhFlan.setTitle("Bánh flan (Caramel Custard)");
-                banhFlan.setDescription("Món tráng miệng mềm mịn, béo ngậy vị trứng sữa, thơm lừng vị caramel.");
+                banhFlan.setTitle("Caramel Custard (Banh Flan)");
+                banhFlan.setDescription("Smooth, creamy dessert with rich egg and milk flavor, fragrant caramel.");
                 banhFlan.setInstructions("""
-                                    1. Thắng đường (sugar) với nước để làm caramel, đổ vào đáy khuôn.
-                                    2. Đánh tan trứng (eggs).
-                                    3. Hâm nóng sữa tươi (milk) và sữa đặc (condensed milk). Không đun sôi.
-                                    4. Từ từ đổ hỗn hợp sữa vào trứng, khuấy đều. Thêm vani.
-                                    5. Lọc hỗn hợp qua rây, đổ vào khuôn đã có caramel.
-                                    6. Hấp hoặc nướng cách thủy ở 150°C trong 40-50 phút.
-                                    7. Để nguội và làm lạnh trước khi ăn.
+                                    1. Caramelize sugar with water, pour into the bottom of molds.
+                                    2. Beat eggs.
+                                    3. Warm up fresh milk and condensed milk. Do not boil.
+                                    4. Slowly pour milk mixture into eggs, stir well. Add vanilla.
+                                    5. Strain mixture through a sieve, pour into molds with caramel.
+                                    6. Steam or bake in a water bath at 150°C for 40-50 minutes.
+                                    7. Let cool and refrigerate before serving.
                                 """);
                 banhFlan.setCookingTimeMinutes(60);
-                banhFlan.setImageUrl("https://images.unsplash.com/photo-1549488344-160b86a8a38b");
+                banhFlan.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462250/e093d21f-4da3-452f-aa57-e9bc3ae7f9c4.png");
                 banhFlan.setStatus(RecipeStatus.PUBLISHED);
                 banhFlan.setRole(MealRole.DESSERT);
                 banhFlan.setMealType(MealType.SNACK);
@@ -1467,17 +1474,17 @@ public class DataInitializer {
                  */
                 Recipe banhMi = new Recipe();
                 banhMi.setCreatedBy(admin);
-                banhMi.setTitle("Bánh mì thịt");
-                banhMi.setDescription("Bánh mì giòn rụm với pate, xíu mại, chả, rau nấm chua ngọt.");
+                banhMi.setTitle("Vietnamese Meat Sandwich (Banh Mi)");
+                banhMi.setDescription("Crispy baguette with pate, meatballs, sausage, and pickled vegetables.");
                 banhMi.setInstructions("""
-                                    1. Nướng bánh mì cho giòn.
-                                    2. Phết pate lên bánh.
-                                    3. Xếp thịt (dùng tạm pork belly), rau cải, dưa chuột.
-                                    4. Thêm nước tương, mayonnaise (dùng tạm sữa), tương ớt (chili oil).
-                                    5. Rắc hành lá, ngò rí.
+                                    1. Toast baguette until crispy.
+                                    2. Spread pate on the bread.
+                                    3. Arrange meat (using pork belly substitute), vegetables, and cucumber.
+                                    4. Add soy sauce, mayonnaise (using milk substitute), chili sauce (chili oil).
+                                    5. Sprinkle with green onions and cilantro.
                                 """);
                 banhMi.setCookingTimeMinutes(15);
-                banhMi.setImageUrl("https://images.unsplash.com/photo-1519676867240-f03562e64548");
+                banhMi.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462335/45ad1488-5e31-491c-8f03-69b6703227fa.png");
                 banhMi.setStatus(RecipeStatus.PUBLISHED);
                 banhMi.setRole(MealRole.MAIN_DISH);
                 banhMi.setMealType(MealType.BREAKFAST);
@@ -1495,17 +1502,17 @@ public class DataInitializer {
                  */
                 Recipe xoiGa = new Recipe();
                 xoiGa.setCreatedBy(admin);
-                xoiGa.setTitle("Xôi gà");
-                xoiGa.setDescription("Xôi nếp dẻo thơm, gà xé, hành phi, nước tương đậm đà.");
+                xoiGa.setTitle("Sticky Rice with Chicken");
+                xoiGa.setDescription("Soft and fragrant sticky rice, shredded chicken, fried shallots, savory soy sauce.");
                 xoiGa.setInstructions("""
-                                    1. Xối nếp sau khi ngâm qua đêm, hấp chín.
-                                    2. Luộc ức gà, xé thành sợi nhỏ.
-                                    3. Phi hành tím với dầu ăn cho thơm.
-                                    4. Trình bày: xôi, gà xé, mỡ hành, rắc rau răm (dùng tạm cilantro).
-                                    5. Ăn kèm nước tương pha (soy sauce + đường).
+                                    1. Steam sticky rice after soaking overnight.
+                                    2. Boil chicken breast, shred into small strips.
+                                    3. Fry shallots with oil until fragrant.
+                                    4. Presentation: sticky rice, shredded chicken, scallion oil, sprinkle with Vietnamese coriander (using cilantro substitute).
+                                    5. Serve with mixed soy sauce (soy sauce + sugar).
                                 """);
                 xoiGa.setCookingTimeMinutes(40);
-                xoiGa.setImageUrl("https://images.unsplash.com/photo-1569562211093-4ed0d0758f12");
+                xoiGa.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462521/377df28c-ba34-4041-9a23-d65965ee88a9.png");
                 xoiGa.setStatus(RecipeStatus.PUBLISHED);
                 xoiGa.setRole(MealRole.MAIN_DISH);
                 xoiGa.setMealType(MealType.BREAKFAST);
@@ -1525,17 +1532,17 @@ public class DataInitializer {
                  */
                 Recipe cheBuoi = new Recipe();
                 cheBuoi.setCreatedBy(admin);
-                cheBuoi.setTitle("Chè bưởi");
-                cheBuoi.setDescription("Món chè thanh mát với múi bưởi, dừa nạo, nước cốt dừa ngọt ngào.");
+                cheBuoi.setTitle("Pomelo Sweet Soup");
+                cheBuoi.setDescription("Refreshing sweet soup with pomelo pith, mung beans, and sweet coconut milk.");
                 cheBuoi.setInstructions("""
-                                    1. Tách múi bưởi (dùng tạm táo hoặc rau củ khác).
-                                    2. Nấu nước cốt dừa (dùng tạm sữa) với đường tạo nước chè.
-                                    3. Cho múi bưởi vào, đun nhẹ.
-                                    4. Thêm dừa nạo (dùng tạm giá đỗ).
-                                    5. Làm nguội hoặc ăn nóng tùy thích.
+                                    1. Prepare pomelo pith (using apple or other vegetable substitute).
+                                    2. Cook coconut milk (using milk substitute) with sugar to make the soup base.
+                                    3. Add pomelo pith, simmer gently.
+                                    4. Add mung beans (using bean sprouts substitute).
+                                    5. Cool down or eat hot as desired.
                                 """);
                 cheBuoi.setCookingTimeMinutes(20);
-                cheBuoi.setImageUrl("https://images.unsplash.com/photo-1563906267088-b029e7101114");
+                cheBuoi.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462600/4e72df95-de49-4001-9abb-9bbde7bf58e2.png");
                 cheBuoi.setStatus(RecipeStatus.PUBLISHED);
                 cheBuoi.setRole(MealRole.DESSERT);
                 cheBuoi.setMealType(MealType.SNACK);
@@ -1553,17 +1560,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 24: Mi Quang (Quang Noodles) ----------------- */
                 Recipe miQuang = new Recipe();
                 miQuang.setCreatedBy(admin);
-                miQuang.setTitle("Mì Quảng");
-                miQuang.setDescription("Đặc sản miền Trung với sợi mì vàng, nước dùng đậm đà, tôm thịt thơm ngon.");
+                miQuang.setTitle("Quang Noodles");
+                miQuang.setDescription("Central Vietnam specialty with yellow noodles, rich broth, delicious shrimp and pork.");
                 miQuang.setInstructions("""
-                                    1. Nấu nước dùng từ xương heo, tôm khô.
-                                    2. Ướp tôm, thịt với nghệ, gia vị.
-                                    3. Xào tôm thịt cho thơm.
-                                    4. Trụng mì, xếp lên bát với rau sống.
-                                    5. Chan nước dùng, thêm đậu phộng rang, bánh tráng nướng.
+                                    1. Cook broth from pork bones and dried shrimp.
+                                    2. Marinate shrimp and pork with turmeric and spices.
+                                    3. Stir-fry shrimp and pork until fragrant.
+                                    4. Blanch noodles, arrange in a bowl with fresh herbs.
+                                    5. Pour in broth, add roasted peanuts and toasted rice paper.
                                 """);
                 miQuang.setCookingTimeMinutes(60);
-                miQuang.setImageUrl("https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43");
+                miQuang.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462694/bd9fe106-fea5-422b-8f73-515135065f91.png");
                 miQuang.setStatus(RecipeStatus.PUBLISHED);
                 miQuang.setRole(MealRole.MAIN_DISH);
                 miQuang.setMealType(MealType.BREAKFAST);
@@ -1581,17 +1588,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 25: Hu Tieu Nam Vang ----------------- */
                 Recipe huTieu = new Recipe();
                 huTieu.setCreatedBy(admin);
-                huTieu.setTitle("Hủ tiếu Nam Vang");
-                huTieu.setDescription("Món hủ tiếu nước trong, ngọt thanh với tôm, thịt, gan, trứng cút.");
+                huTieu.setTitle("Nam Vang Noodle Soup");
+                huTieu.setDescription("Clear noodle soup, sweet and light with shrimp, meat, liver, and quail eggs.");
                 huTieu.setInstructions("""
-                                    1. Hầm xương heo lấy nước dùng trong.
-                                    2. Luộc tôm, thịt băm viên, gan heo.
-                                    3. Trụng hủ tiếu, xếp vào tô.
-                                    4. Xếp tôm, thịt, gan, giá đỗ, hành lá lên trên.
-                                    5. Chan nước dùng nóng, ăn kèm tương ớt.
+                                    1. Simmer pork bones for clear broth.
+                                    2. Boil shrimp, minced meat balls, pork liver.
+                                    3. Blanch noodles, place in a bowl.
+                                    4. Arrange shrimp, meat, liver, bean sprouts, and green onions on top.
+                                    5. Pour hot broth, serve with chili sauce.
                                 """);
                 huTieu.setCookingTimeMinutes(45);
-                huTieu.setImageUrl("https://images.unsplash.com/photo-1569718212165-3a8278d5f624");
+                huTieu.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462700/88650938-fea5-4b97-9b1d-f61d7e7dc5e8.png");
                 huTieu.setStatus(RecipeStatus.PUBLISHED);
                 huTieu.setRole(MealRole.MAIN_DISH);
                 huTieu.setMealType(MealType.BREAKFAST);
@@ -1609,17 +1616,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 26: Bun Cha Ha Noi ----------------- */
                 Recipe bunCha = new Recipe();
                 bunCha.setCreatedBy(admin);
-                bunCha.setTitle("Bún chả Hà Nội");
-                bunCha.setDescription("Thịt nướng thơm lừng, chấm nước mắm chua ngọt, ăn với bún và rau sống.");
+                bunCha.setTitle("Hanoi Bun Cha");
+                bunCha.setDescription("Fragrant grilled pork, dipped in sweet and sour fish sauce, served with vermicelli and fresh herbs.");
                 bunCha.setInstructions("""
-                                    1. Ướp thịt ba rọi và thịt băm với mắm, đường, tỏi.
-                                    2. Nướng thịt trên than hoa hoặc lò nướng.
-                                    3. Pha nước mắm chua ngọt (mắm, đường, chanh, tỏi, ớt).
-                                    4. Cho thịt nướng vào bát nước mắm.
-                                    5. Ăn kèm bún tươi và rau sống.
+                                    1. Marinate pork belly and minced pork with fish sauce, sugar, garlic.
+                                    2. Grill meat over charcoal or in an oven.
+                                    3. Make sweet and sour fish sauce (fish sauce, sugar, lemon, garlic, chili).
+                                    4. Put grilled meat into the fish sauce bowl.
+                                    5. Serve with fresh vermicelli and herbs.
                                 """);
                 bunCha.setCookingTimeMinutes(40);
-                bunCha.setImageUrl("https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba");
+                bunCha.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462792/a6706928-1118-4020-a541-94ca172c63e0.png");
                 bunCha.setStatus(RecipeStatus.PUBLISHED);
                 bunCha.setRole(MealRole.MAIN_DISH);
                 bunCha.setMealType(MealType.LUNCH);
@@ -1638,17 +1645,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 27: Ca Kho To (Caramelized Fish) ----------------- */
                 Recipe caKhoTo = new Recipe();
                 caKhoTo.setCreatedBy(admin);
-                caKhoTo.setTitle("Cá kho tộ");
-                caKhoTo.setDescription("Cá lóc kho trong niêu đất với nước màu, tiêu đen, ăn với cơm trắng.");
+                caKhoTo.setTitle("Caramelized Fish in Clay Pot");
+                caKhoTo.setDescription("Snakehead fish braised in a clay pot with caramel sauce and black pepper, served with white rice.");
                 caKhoTo.setInstructions("""
-                                    1. Cắt cá thành khúc, ướp với nước mắm, tiêu.
-                                    2. Thắng đường làm nước màu (caramel).
-                                    3. Phi hành tỏi, xếp cá vào niêu đất.
-                                    4. Đổ nước dừa và nước màu vào, kho lửa nhỏ.
-                                    5. Kho đến khi nước sệt lại, rắc tiêu và hành lá.
+                                    1. Cut fish into steaks, marinate with fish sauce and pepper.
+                                    2. Caramelize sugar to make color water.
+                                    3. Sauté shallots and garlic, arrange fish in the clay pot.
+                                    4. Pour coconut water and caramel water in, braise on low heat.
+                                    5. Braise until sauce thickens, sprinkle with pepper and green onions.
                                 """);
                 caKhoTo.setCookingTimeMinutes(50);
-                caKhoTo.setImageUrl("https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2");
+                caKhoTo.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462827/aaa7d740-9478-436d-bfbe-c606991cfc7e.png");
                 caKhoTo.setStatus(RecipeStatus.PUBLISHED);
                 caKhoTo.setRole(MealRole.MAIN_DISH);
                 caKhoTo.setMealType(MealType.LUNCH);
@@ -1666,17 +1673,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 28: Tom Nuong Muoi Ot (Grilled Shrimp) ----------------- */
                 Recipe tomNuong = new Recipe();
                 tomNuong.setCreatedBy(admin);
-                tomNuong.setTitle("Tôm nướng muối ớt");
-                tomNuong.setDescription("Tôm sú tươi nướng với muối ớt cay thơm, vỏ giòn thịt ngọt.");
+                tomNuong.setTitle("Grilled Shrimp with Chili Salt");
+                tomNuong.setDescription("Fresh tiger prawns grilled with spicy chili salt, crispy shell and sweet meat.");
                 tomNuong.setInstructions("""
-                                    1. Rửa sạch tôm, để nguyên vỏ.
-                                    2. Ướp tôm với muối, ớt bột, tỏi băm, dầu ăn.
-                                    3. Nướng tôm trên bếp than hoặc lò nướng.
-                                    4. Nướng đến khi tôm chín đỏ, vỏ hơi cháy xém.
-                                    5. Ăn kèm muối tiêu chanh.
+                                    1. Wash shrimp, keep the shell on.
+                                    2. Marinate shrimp with salt, chili powder, minced garlic, oil.
+                                    3. Grill shrimp over charcoal or in an oven.
+                                    4. Grill until shrimp turns red and shell is slightly charred.
+                                    5. Serve with lime pepper salt.
                                 """);
                 tomNuong.setCookingTimeMinutes(20);
-                tomNuong.setImageUrl("https://images.unsplash.com/photo-1565680018093-5ac96e3ce654");
+                tomNuong.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462884/272904f1-de54-4003-af8c-7ddd2c419d59.png");
                 tomNuong.setStatus(RecipeStatus.PUBLISHED);
                 tomNuong.setRole(MealRole.MAIN_DISH);
                 tomNuong.setMealType(MealType.DINNER);
@@ -1693,17 +1700,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 29: Canh Ga Chien Nuoc Mam (Fried Chicken Wings) ----------------- */
                 Recipe canhGaChien = new Recipe();
                 canhGaChien.setCreatedBy(admin);
-                canhGaChien.setTitle("Cánh gà chiên nước mắm");
-                canhGaChien.setDescription("Cánh gà chiên giòn phủ lớp nước mắm caramel ngọt mặn đậm đà.");
+                canhGaChien.setTitle("Fried Chicken Wings with Fish Sauce");
+                canhGaChien.setDescription("Crispy fried chicken wings coated in a savory and sweet caramelized fish sauce.");
                 canhGaChien.setInstructions("""
-                                    1. Ướp cánh gà với muối, tiêu, tỏi.
-                                    2. Chiên cánh gà 2 lần cho giòn.
-                                    3. Làm sốt: đun nước mắm, đường, tỏi cho sệt.
-                                    4. Trộn đều cánh gà với sốt nước mắm.
-                                    5. Rắc tỏi phi và tiêu lên trên.
+                                    1. Marinate chicken wings with salt, pepper, garlic.
+                                    2. Fry chicken wings twice for crispiness.
+                                    3. Make sauce: simmer fish sauce, sugar, garlic until thickened.
+                                    4. Toss chicken wings in the fish sauce mixture.
+                                    5. Sprinkle with fried garlic and pepper.
                                 """);
                 canhGaChien.setCookingTimeMinutes(35);
-                canhGaChien.setImageUrl("https://images.unsplash.com/photo-1567620832903-9fc6debc209f");
+                canhGaChien.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462891/6f821909-0c23-4f70-b1bf-ea6903965beb.png");
                 canhGaChien.setStatus(RecipeStatus.PUBLISHED);
                 canhGaChien.setRole(MealRole.MAIN_DISH);
                 canhGaChien.setMealType(MealType.DINNER);
@@ -1720,17 +1727,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 30: Banh Bao (Steamed Bun) ----------------- */
                 Recipe banhBao = new Recipe();
                 banhBao.setCreatedBy(admin);
-                banhBao.setTitle("Bánh bao nhân thịt");
-                banhBao.setDescription("Bánh bao trắng mềm với nhân thịt heo, trứng cút, nấm mèo.");
+                banhBao.setTitle("Steamed Pork Bun");
+                banhBao.setDescription("Soft white bun with pork, quail egg, and wood ear mushroom filling.");
                 banhBao.setInstructions("""
-                                    1. Làm nhân: xào thịt heo băm với hành, nấm mèo, nêm gia vị.
-                                    2. Nhồi bột, ủ bột nở.
-                                    3. Cán bột, cho nhân và trứng cút đã luộc vào.
-                                    4. Gói bánh, để nghỉ 15 phút.
-                                    5. Hấp bánh 15-20 phút cho chín.
+                                    1. Make filling: stir-fry minced pork with onions, wood ear mushrooms, season.
+                                    2. Knead dough, let it rise.
+                                    3. Roll dough, add filling and boiled quail eggs.
+                                    4. Wrap buns, let rest for 15 minutes.
+                                    5. Steam buns for 15-20 minutes until cooked.
                                 """);
                 banhBao.setCookingTimeMinutes(60);
-                banhBao.setImageUrl("https://images.unsplash.com/photo-1529023466172-04920dd6926a");
+                banhBao.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767462991/2ef771fc-5bc7-4d25-bbef-8abd03ae2cdb.png");
                 banhBao.setStatus(RecipeStatus.PUBLISHED);
                 banhBao.setRole(MealRole.MAIN_DISH);
                 banhBao.setMealType(MealType.SNACK);
@@ -1746,17 +1753,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 31: Cha Ca La Vong (Turmeric Fish) ----------------- */
                 Recipe chaCa = new Recipe();
                 chaCa.setCreatedBy(admin);
-                chaCa.setTitle("Chả cá Lã Vọng");
-                chaCa.setDescription("Đặc sản Hà Nội với cá lóc chiên vàng nghệ, ăn với bún và rau thì là.");
+                chaCa.setTitle("La Vong Turmeric Fish");
+                chaCa.setDescription("Hanoi specialty with turmeric-fried fish, served with vermicelli and dill.");
                 chaCa.setInstructions("""
-                                    1. Ướp cá với nghệ, mẻ, mắm tôm, dầu ăn.
-                                    2. Chiên cá trong chảo dầu cho vàng đều.
-                                    3. Thêm hành lá, thì là (dùng tạm cilantro) vào chảo.
-                                    4. Đảo nhanh tay, tắt bếp.
-                                    5. Ăn kèm bún, đậu phộng rang, mắm tôm.
+                                    1. Marinate fish with turmeric, fermented rice, shrimp paste, oil.
+                                    2. Fry fish in oil until golden.
+                                    3. Add green onions and dill (using cilantro substitute) to the pan.
+                                    4. Stir quickly, turn off heat.
+                                    5. Serve with vermicelli, roasted peanuts, and shrimp paste.
                                 """);
                 chaCa.setCookingTimeMinutes(30);
-                chaCa.setImageUrl("https://images.unsplash.com/photo-1580476262798-bddd9f4b7369");
+                chaCa.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767463083/ceea9268-fae4-4b43-9de6-41a7412cd15b.png");
                 chaCa.setStatus(RecipeStatus.PUBLISHED);
                 chaCa.setRole(MealRole.MAIN_DISH);
                 chaCa.setMealType(MealType.DINNER);
@@ -1774,17 +1781,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 32: Bun Rieu Cua (Crab Noodle Soup) ----------------- */
                 Recipe bunRieu = new Recipe();
                 bunRieu.setCreatedBy(admin);
-                bunRieu.setTitle("Bún riêu cua");
-                bunRieu.setDescription("Bún với nước dùng chua từ cà chua, riêu cua đồng béo ngậy.");
+                bunRieu.setTitle("Crab Noodle Soup (Bun Rieu Cua)");
+                bunRieu.setDescription("Vermicelli with sour broth from tomatoes and rich field crab paste.");
                 bunRieu.setInstructions("""
-                                    1. Xay cua với nước, lọc lấy nước cua.
-                                    2. Đun nước cua, khuấy nhẹ cho riêu nổi lên.
-                                    3. Xào cà chua, cho vào nồi nước dùng.
-                                    4. Nêm mắm tôm, mắm, muối cho vừa vị.
-                                    5. Trụng bún, chan nước, xếp riêu cua, đậu hũ, rau.
+                                    1. Grind crab with water, filter to get crab liquid.
+                                    2. Boil crab liquid, stir gently for crab paste to float.
+                                    3. Sauté tomatoes, add to the broth pot.
+                                    4. Season with shrimp paste, fish sauce, salt to taste.
+                                    5. Blanch vermicelli, pour broth, arrange crab paste, tofu, vegetables.
                                 """);
                 bunRieu.setCookingTimeMinutes(50);
-                bunRieu.setImageUrl("https://images.unsplash.com/photo-1555126634-323283e090fa");
+                bunRieu.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767463132/47869d68-30d6-462d-9a77-9a37b65e5db0.png");
                 bunRieu.setStatus(RecipeStatus.PUBLISHED);
                 bunRieu.setRole(MealRole.MAIN_DISH);
                 bunRieu.setMealType(MealType.LUNCH);
@@ -1804,17 +1811,17 @@ public class DataInitializer {
                 /* ----------------- Recipe 33: Thit Nuong BBQ (Grilled Pork) ----------------- */
                 Recipe thitNuong = new Recipe();
                 thitNuong.setCreatedBy(admin);
-                thitNuong.setTitle("Thịt nướng BBQ kiểu Việt");
-                thitNuong.setDescription("Thịt heo ướp sả ớt nướng than, thơm lừng đậm đà.");
+                thitNuong.setTitle("Vietnamese BBQ Grilled Pork");
+                thitNuong.setDescription("Pork marinated with lemongrass and chili, grilled over charcoal, fragrant and flavorful.");
                 thitNuong.setInstructions("""
-                                    1. Thái thịt mỏng, ướp với sả, tỏi, mật ong, nước mắm.
-                                    2. Để ướp ít nhất 2 tiếng hoặc qua đêm.
-                                    3. Nướng thịt trên bếp than hoặc chảo gang.
-                                    4. Nướng đến khi xém vàng, thơm.
-                                    5. Ăn kèm cơm tấm hoặc bún.
+                                    1. Slice meat thinly, marinate with lemongrass, garlic, honey, fish sauce.
+                                    2. Marinate for at least 2 hours or overnight.
+                                    3. Grill meat over charcoal or on a cast iron skillet.
+                                    4. Grill until charred and fragrant.
+                                    5. Serve with broken rice or vermicelli.
                                 """);
                 thitNuong.setCookingTimeMinutes(30);
-                thitNuong.setImageUrl("https://images.unsplash.com/photo-1544025162-d76694265947");
+                thitNuong.setImageUrl("https://res.cloudinary.com/dmfvnmpuq/image/upload/v1767463241/5c51e4c7-b3af-46f4-ba7b-4cb6be207b3d.png");
                 thitNuong.setStatus(RecipeStatus.PUBLISHED);
                 thitNuong.setRole(MealRole.MAIN_DISH);
                 thitNuong.setMealType(MealType.DINNER);

@@ -17,6 +17,7 @@ import com.project.mealplan.entity.RecipeCategory;
 import com.project.mealplan.entity.RecipeIngredient;
 import com.project.mealplan.entity.User;
 import com.project.mealplan.repository.IngredientRepository;
+import com.project.mealplan.repository.PantryRepository;
 import com.project.mealplan.repository.RecipeCategoryRepository;
 import com.project.mealplan.repository.RecipeRepository;
 import com.project.mealplan.repository.UserRepository;
@@ -34,9 +35,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.project.mealplan.common.util.CalculateCalories;
+import com.project.mealplan.common.util.CalculateRecipeScore;
+import com.project.mealplan.common.util.CalculateDailyCalories;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final IngredientRepository ingredientRepository;
     private final RecipeCategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final PantryRepository pantryRepository;
 
     @Override
     @Transactional
@@ -485,4 +490,90 @@ public class RecipeServiceImpl implements RecipeService {
 
         return convertToDto(recipe);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RecipeShortResponse> getSuggestionRecipes(Long userId) {
+        // 1. Get user and validate
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. Calculate daily calorie target (for calorie fit scoring)
+        BigDecimal dailyCalorieTarget = CalculateDailyCalories.calculateDailyCalorieTarget(user);
+        // Target calories per meal (assuming 3 meals per day)
+        BigDecimal targetCaloriesPerMeal = dailyCalorieTarget.divide(BigDecimal.valueOf(3), RoundingMode.HALF_UP);
+
+        // 3. Get user's pantry ingredients
+        Set<Long> pantryIngredientIds = getUserPantryIngredientIds(userId);
+
+        // 4. Get user's favorite recipe IDs
+        Set<Long> favoriteRecipeIds = user.getFavorites().stream()
+                .map(Recipe::getRecipeId)
+                .collect(Collectors.toSet());
+
+        // 5. Get all published recipes
+        List<Recipe> publishedRecipes = recipeRepository.findAll().stream()
+                .filter(r -> r.getStatus() == RecipeStatus.PUBLISHED)
+                .collect(Collectors.toList());
+
+        if (publishedRecipes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 6. Score and sort recipes
+        List<Recipe> sortedRecipes = publishedRecipes.stream()
+                .map(recipe -> {
+                    double score = CalculateRecipeScore.calculateRecipeScore(
+                            recipe,
+                            targetCaloriesPerMeal,
+                            pantryIngredientIds,
+                            favoriteRecipeIds
+                    );
+                    return new ScoredRecipe(recipe, score);
+                })
+                .sorted(Comparator.comparingDouble(ScoredRecipe::score).reversed())
+                .map(ScoredRecipe::recipe)
+                .limit(10) // Return top 10 suggestions
+                .collect(Collectors.toList());
+
+        // 7. Convert to response DTOs
+        return sortedRecipes.stream()
+                .map(this::convertToShortResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get ingredient IDs from user's pantry
+     */
+    private Set<Long> getUserPantryIngredientIds(Long userId) {
+        return pantryRepository.findByUser_UserId(userId)
+                .map(pantry -> pantry.getItems().stream()
+                        .map(item -> item.getIngredient().getId())
+                        .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
+    }
+
+    /**
+     * Convert Recipe to RecipeShortResponse
+     */
+    private RecipeShortResponse convertToShortResponse(Recipe recipe) {
+        Set<String> categories = recipe.getCategories().stream()
+                .map(RecipeCategory::getName)
+                .collect(Collectors.toSet());
+
+        return new RecipeShortResponse(
+                recipe.getRecipeId(),
+                recipe.getTitle(),
+                recipe.getImageUrl(),
+                recipe.getStatus(),
+                categories,
+                recipe.getCookingTimeMinutes(),
+                recipe.getCalories()
+        );
+    }
+
+    /**
+     * Helper record to hold recipe and its score
+     */
+    private record ScoredRecipe(Recipe recipe, double score) {}
 }

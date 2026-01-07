@@ -14,13 +14,20 @@ import com.project.mealplan.common.enums.ErrorCode;
 import com.project.mealplan.common.enums.MealType;
 import com.project.mealplan.common.enums.RecipeStatus;
 import com.project.mealplan.common.exception.AppException;
+import com.project.mealplan.dtos.mealplan.request.UpdateMealSlotRecipeRequest;
 import com.project.mealplan.dtos.mealplan.response.MealDayResponse;
+import com.project.mealplan.dtos.mealplan.response.MealSlotDetailResponse;
+import com.project.mealplan.dtos.mealplan.response.MealSlotListResponse;
 import com.project.mealplan.dtos.mealplan.response.MealSlotResponse;
+import com.project.mealplan.dtos.mealplan.response.NutritionDetailResponse;
 import com.project.mealplan.dtos.mealplan.response.NutritionSummaryResponse;
+import com.project.mealplan.dtos.mealplan.response.UpdatedMealSlotResponse;
 import com.project.mealplan.dtos.mealplan.response.WeeklyMealPlanResponse;
 import com.project.mealplan.entity.*;
 import com.project.mealplan.repository.*;
 import com.project.mealplan.service.MealPlanService;
+import com.project.mealplan.common.util.CalculateRecipeScore;
+import com.project.mealplan.common.util.CalculateDailyCalories;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +41,7 @@ public class MealPlanServiceImpl implements MealPlanService {
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
     private final PantryRepository pantryRepository;
-
-    // Scoring weights
-    private static final double CALORIE_WEIGHT = 0.5;
-    private static final double PANTRY_WEIGHT = 0.3;
-    private static final double FAVORITE_WEIGHT = 0.2;
+    private final MealSlotRepository mealSlotRepository;
 
     // Variety penalty for recipe repetition
     private static final double BASE_REPETITION_PENALTY = 0.7; // 70% penalty per overall use
@@ -72,7 +75,7 @@ public class MealPlanServiceImpl implements MealPlanService {
         validateUserProfile(user);
 
         // 4. Calculate daily calorie target
-        BigDecimal dailyCalorieTarget = calculateDailyCalorieTarget(user);
+        BigDecimal dailyCalorieTarget = CalculateDailyCalories.calculateDailyCalorieTarget(user);
         log.info("Daily calorie target: {}", dailyCalorieTarget);
 
         // 5. Get user's pantry and favorites
@@ -155,7 +158,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
                     // Calculate score
                     double score = recipeScores.computeIfAbsent(selectedRecipe.getRecipeId(),
-                            id -> calculateRecipeScore(selectedRecipe, mealCalorieTarget,
+                            id -> CalculateRecipeScore.calculateRecipeScore(selectedRecipe, mealCalorieTarget,
                                     pantryIngredientIds, favoriteRecipeIds));
 
                     // Create response
@@ -165,6 +168,8 @@ public class MealPlanServiceImpl implements MealPlanService {
                             .title(selectedRecipe.getTitle())
                             .calories(selectedRecipe.getCalories())
                             .score(score)
+                            .consumed(false) // New meal slots default to not consumed
+                            .consumedAt(null)
                             .build();
 
                     mealsMap.computeIfAbsent(mealType, k -> new ArrayList<>()).add(slotResponse);
@@ -206,29 +211,87 @@ public class MealPlanServiceImpl implements MealPlanService {
         // 9. Save meal plan
         MealPlan savedMealPlan = mealPlanRepository.save(mealPlan);
 
-        // Update meal slot IDs in responses
-        for (int i = 0; i < savedMealPlan.getMealDays().size(); i++) {
-            MealDay mealDay = savedMealPlan.getMealDays().get(i);
-            MealDayResponse dayResponse = dayResponses.get(i);
+        // 10. Build response
+        return mapToWeeklyMealPlanResponse(savedMealPlan);
+    }
 
-            int slotIndex = 0;
-            for (MealType mealType : MealType.values()) {
-                List<MealSlotResponse> slots = dayResponse.getMeals().get(mealType);
-                if (slots != null) {
-                    for (MealSlotResponse slot : slots) {
-                        if (slotIndex < mealDay.getMealSlots().size()) {
-                            slot.setMealSlotId(mealDay.getMealSlots().get(slotIndex).getId());
-                            slotIndex++;
-                        }
-                    }
+    @Override
+    @Transactional(readOnly = true)
+    public WeeklyMealPlanResponse getWeeklyMealPlan(Long userId, LocalDate date) {
+        log.info("Getting weekly meal plan for user: {}, date: {}", userId, date);
+
+        LocalDate weekStart = calculateWeekStart(date);
+        MealPlan mealPlan = mealPlanRepository.findByUser_UserIdAndStartDate(userId, weekStart)
+                .orElseThrow(() -> new AppException(ErrorCode.MEAL_PLAN_NOT_FOUND));
+
+        return mapToWeeklyMealPlanResponse(mealPlan);
+    }
+
+    private WeeklyMealPlanResponse mapToWeeklyMealPlanResponse(MealPlan mealPlan) {
+        List<MealDayResponse> dayResponses = new ArrayList<>();
+
+        for (MealDay mealDay : mealPlan.getMealDays()) {
+            Map<MealType, List<MealSlotResponse>> mealsMap = new EnumMap<>(MealType.class);
+            BigDecimal dailyCalories = BigDecimal.ZERO;
+            BigDecimal dailyProtein = BigDecimal.ZERO;
+            BigDecimal dailyCarbs = BigDecimal.ZERO;
+            BigDecimal dailyFat = BigDecimal.ZERO;
+
+            for (MealSlot slot : mealDay.getMealSlots()) {
+                Recipe recipe = slot.getRecipe();
+
+                // Calculate score (simplified re-calculation or just skip since it's already
+                // generated)
+                // For retrieval, we might not need the exact generation score, so we can use 0
+                // or recalculate.
+                // Re-calculating for consistency.
+                Double score = 0.0; // Determine if we need to store score. Entity doesn't store it.
+
+                MealSlotResponse slotResponse = MealSlotResponse.builder()
+                        .mealSlotId(slot.getId())
+                        .recipeId(recipe.getRecipeId())
+                        .title(recipe.getTitle())
+                        .calories(recipe.getCalories())
+                        .score(score)
+                        .consumed(slot.getConsumed())
+                        .consumedAt(slot.getConsumedAt())
+                        .build();
+
+                mealsMap.computeIfAbsent(slot.getType(), k -> new ArrayList<>()).add(slotResponse);
+
+                if (recipe.getCalories() != null) {
+                    dailyCalories = dailyCalories.add(recipe.getCalories());
                 }
+
+                Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
+                dailyProtein = dailyProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
+                dailyCarbs = dailyCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
+                dailyFat = dailyFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
             }
+
+            NutritionSummaryResponse nutritionSummary = NutritionSummaryResponse.builder()
+                    .totalCalories(dailyCalories)
+                    .protein(dailyProtein)
+                    .carbs(dailyCarbs)
+                    .fat(dailyFat)
+                    .build();
+
+            MealDayResponse dayResponse = MealDayResponse.builder()
+                    .date(mealDay.getDate())
+                    .meals(mealsMap)
+                    .nutritionSummary(nutritionSummary)
+                    .build();
+
+            dayResponses.add(dayResponse);
         }
 
-        // 10. Build response
+        // Sort days by date
+        dayResponses.sort(Comparator.comparing(MealDayResponse::getDate));
+
         return WeeklyMealPlanResponse.builder()
-                .weekStartDate(weekStart)
-                .weekEndDate(weekEnd)
+                .id(mealPlan.getId())
+                .weekStartDate(mealPlan.getStartDate())
+                .weekEndDate(mealPlan.getEndDate())
                 .days(dayResponses)
                 .build();
     }
@@ -249,55 +312,6 @@ public class MealPlanServiceImpl implements MealPlanService {
         if (user.getWeight() == null || user.getHeight() == null || user.getAge() == null) {
             throw new AppException(ErrorCode.INSUFFICIENT_USER_PROFILE);
         }
-    }
-
-    /**
-     * Calculate daily calorie target using Mifflin-St Jeor equation
-     */
-    private BigDecimal calculateDailyCalorieTarget(User user) {
-        BigDecimal weight = user.getWeight(); // kg
-        BigDecimal height = user.getHeight(); // cm
-        int age = user.getAge();
-
-        // BMR calculation
-        BigDecimal bmr;
-        if (user.getGender() != null && user.getGender().toString().equalsIgnoreCase("MALE")) {
-            // BMR (men) = 10 * weight + 6.25 * height - 5 * age + 5
-            bmr = weight.multiply(BigDecimal.TEN)
-                    .add(height.multiply(BigDecimal.valueOf(6.25)))
-                    .subtract(BigDecimal.valueOf(age * 5))
-                    .add(BigDecimal.valueOf(5));
-        } else {
-            // BMR (women) = 10 * weight + 6.25 * height - 5 * age - 161
-            bmr = weight.multiply(BigDecimal.TEN)
-                    .add(height.multiply(BigDecimal.valueOf(6.25)))
-                    .subtract(BigDecimal.valueOf(age * 5))
-                    .subtract(BigDecimal.valueOf(161));
-        }
-
-        // Activity multiplier (default to moderate = 1.55)
-        BigDecimal activityMultiplier = getActivityMultiplier(user.getActivityLevel().name());
-        BigDecimal tdee = bmr.multiply(activityMultiplier);
-
-        return tdee.setScale(0, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Get activity multiplier based on activity level
-     */
-    private BigDecimal getActivityMultiplier(String activityLevel) {
-        if (activityLevel == null) {
-            return BigDecimal.valueOf(1.55); // Moderate
-        }
-
-        return switch (activityLevel.toLowerCase()) {
-            case "sedentary" -> BigDecimal.valueOf(1.2);
-            case "light" -> BigDecimal.valueOf(1.375);
-            case "moderate" -> BigDecimal.valueOf(1.55);
-            case "active" -> BigDecimal.valueOf(1.725);
-            case "very_active" -> BigDecimal.valueOf(1.9);
-            default -> BigDecimal.valueOf(1.55);
-        };
     }
 
     /**
@@ -348,7 +362,7 @@ public class MealPlanServiceImpl implements MealPlanService {
 
                     // 1. Get base quality score (0.0 - 1.0)
                     double baseScore = scoreCache.computeIfAbsent(recipeId,
-                            id -> calculateRecipeScore(recipe, targetCalories,
+                            id -> CalculateRecipeScore.calculateRecipeScore(recipe, targetCalories,
                                     pantryIngredientIds, favoriteRecipeIds));
 
                     // 2. Apply base repetition penalty (linear)
@@ -380,63 +394,6 @@ public class MealPlanServiceImpl implements MealPlanService {
                     return Math.max(0.0, adjustedScore); // Ensure non-negative
                 }))
                 .orElse(null);
-    }
-
-    /**
-     * Calculate recipe score based on calorie fit, pantry match, and favorite
-     * status
-     */
-    private double calculateRecipeScore(
-            Recipe recipe,
-            BigDecimal targetCalories,
-            Set<Long> pantryIngredientIds,
-            Set<Long> favoriteRecipeIds) {
-
-        // (A) Calorie Fit Score (50%)
-        double calorieScore = calculateCalorieScore(recipe.getCalories(), targetCalories);
-
-        // (B) Pantry Match Score (30%)
-        double pantryScore = calculatePantryScore(recipe, pantryIngredientIds);
-
-        // (C) Favorite Score (20%)
-        double favoriteScore = favoriteRecipeIds.contains(recipe.getRecipeId()) ? 1.0 : 0.0;
-
-        // Total score
-        double totalScore = CALORIE_WEIGHT * calorieScore
-                + PANTRY_WEIGHT * pantryScore
-                + FAVORITE_WEIGHT * favoriteScore;
-
-        return Math.max(0.0, Math.min(1.0, totalScore)); // Clamp to [0, 1]
-    }
-
-    /**
-     * Calculate calorie fit score
-     */
-    private double calculateCalorieScore(BigDecimal recipeCalories, BigDecimal targetCalories) {
-        if (recipeCalories == null || targetCalories.compareTo(BigDecimal.ZERO) == 0) {
-            return 0.5; // Neutral score
-        }
-
-        BigDecimal diff = recipeCalories.subtract(targetCalories).abs();
-        BigDecimal ratio = diff.divide(targetCalories, 4, RoundingMode.HALF_UP);
-
-        double score = 1.0 - ratio.doubleValue();
-        return Math.max(0.0, Math.min(1.0, score));
-    }
-
-    /**
-     * Calculate pantry match score
-     */
-    private double calculatePantryScore(Recipe recipe, Set<Long> pantryIngredientIds) {
-        if (recipe.getIngredients().isEmpty()) {
-            return 0.0;
-        }
-
-        long matchedCount = recipe.getIngredients().stream()
-                .filter(ri -> pantryIngredientIds.contains(ri.getIngredient().getId()))
-                .count();
-
-        return (double) matchedCount / recipe.getIngredients().size();
     }
 
     /**
@@ -473,5 +430,174 @@ public class MealPlanServiceImpl implements MealPlanService {
         nutrition.put("fat", fat);
 
         return nutrition;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MealSlotListResponse getMealSlotsByDateAndMealType(Long userId, LocalDate date, MealType mealType) {
+        log.info("Getting meal slots for user: {}, date: {}, mealType: {}", userId, date, mealType);
+
+        LocalDate weekStart = calculateWeekStart(date);
+
+        MealPlan mealPlan = mealPlanRepository.findByUser_UserIdAndStartDate(userId, weekStart)
+                .orElse(null);
+
+        MealSlotListResponse response = MealSlotListResponse.builder()
+                .date(date)
+                .mealType(mealType)
+                .slots(new ArrayList<>())
+                .nutritionSummary(NutritionSummaryResponse.builder()
+                        .totalCalories(BigDecimal.ZERO)
+                        .protein(BigDecimal.ZERO)
+                        .carbs(BigDecimal.ZERO)
+                        .fat(BigDecimal.ZERO)
+                        .build())
+                .build();
+
+        if (mealPlan == null) {
+            log.debug("No meal plan found for user: {}, weekStart: {}", userId, weekStart);
+            return response;
+        }
+
+        MealDay mealDay = mealPlan.getMealDays().stream()
+                .filter(md -> md.getDate().equals(date))
+                .findFirst()
+                .orElse(null);
+
+        if (mealDay == null) {
+            log.debug("No meal day found for date: {}", date);
+            return response;
+        }
+
+        List<MealSlot> mealSlots = mealDay.getMealSlots().stream()
+                .filter(slot -> slot.getType() == mealType)
+                .collect(Collectors.toList());
+
+        List<MealSlotDetailResponse> slots = new ArrayList<>();
+        BigDecimal totalCalories = BigDecimal.ZERO;
+        BigDecimal totalProtein = BigDecimal.ZERO;
+        BigDecimal totalCarbs = BigDecimal.ZERO;
+        BigDecimal totalFat = BigDecimal.ZERO;
+
+        for (MealSlot mealSlot : mealSlots) {
+            Recipe recipe = mealSlot.getRecipe();
+            Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
+
+            MealSlotDetailResponse slotResponse = MealSlotDetailResponse.builder()
+                    .mealSlotId(mealSlot.getId())
+                    .mealPlanId(mealPlan.getId())
+                    .recipeId(recipe.getRecipeId())
+                    .title(recipe.getTitle())
+                    .imageUrl(recipe.getImageUrl())
+                    .calories(recipe.getCalories())
+                    .nutrition(NutritionDetailResponse.builder()
+                            .protein(nutrition.getOrDefault("protein", BigDecimal.ZERO))
+                            .carbs(nutrition.getOrDefault("carbs", BigDecimal.ZERO))
+                            .fat(nutrition.getOrDefault("fat", BigDecimal.ZERO))
+                            .build())
+                    .consumed(mealSlot.getConsumed())
+                    .consumedAt(mealSlot.getConsumedAt())
+                    .build();
+
+            slots.add(slotResponse);
+
+            if (recipe.getCalories() != null) {
+                totalCalories = totalCalories.add(recipe.getCalories());
+            }
+            totalProtein = totalProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
+            totalCarbs = totalCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
+            totalFat = totalFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
+        }
+
+        response.setSlots(slots);
+        response.setNutritionSummary(NutritionSummaryResponse.builder()
+                .totalCalories(totalCalories)
+                .protein(totalProtein)
+                .carbs(totalCarbs)
+                .fat(totalFat)
+                .build());
+
+        log.info("Retrieved {} meal slots for date: {}, mealType: {}", slots.size(), date, mealType);
+
+        return response;
+    }
+
+    @Override
+    @Transactional
+    public UpdatedMealSlotResponse updateMealSlotRecipe(Long userId, Long mealSlotId,
+            UpdateMealSlotRecipeRequest request) {
+        log.info("Updating meal slot: {} for user: {} with recipe: {}", mealSlotId, userId, request.getRecipeId());
+
+        MealSlot mealSlot = mealSlotRepository.findById(mealSlotId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "Meal slot not found"));
+
+        MealDay mealDay = mealSlot.getMealDay();
+        MealPlan mealPlan = mealDay.getMealPlan();
+
+        if (!mealPlan.getUser().getUserId().equals(userId)) {
+            log.warn("Unauthorized access attempt: user {} trying to update slot of user {}",
+                    userId, mealPlan.getUser().getUserId());
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
+
+        Recipe newRecipe = recipeRepository.findById(request.getRecipeId())
+                .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
+
+        mealSlot.setRecipe(newRecipe);
+        MealSlot updatedMealSlot = mealSlotRepository.save(mealSlot);
+        log.info("Meal slot {} updated successfully with recipe {}", mealSlotId, request.getRecipeId());
+
+        NutritionSummaryResponse dayNutrition = calculateDayNutritionSummary(mealDay);
+
+        Map<String, BigDecimal> recipeNutrition = calculateRecipeNutrition(newRecipe);
+
+        UpdatedMealSlotResponse response = UpdatedMealSlotResponse.builder()
+                .mealSlotId(updatedMealSlot.getId())
+                .date(mealDay.getDate().toString())
+                .mealType(updatedMealSlot.getType())
+                .recipe(UpdatedMealSlotResponse.RecipeDetailResponse.builder()
+                        .recipeId(newRecipe.getRecipeId())
+                        .title(newRecipe.getTitle())
+                        .imageUrl(newRecipe.getImageUrl())
+                        .calories(newRecipe.getCalories())
+                        .nutrition(NutritionSummaryResponse.builder()
+                                .protein(recipeNutrition.getOrDefault("protein", BigDecimal.ZERO))
+                                .carbs(recipeNutrition.getOrDefault("carbs", BigDecimal.ZERO))
+                                .fat(recipeNutrition.getOrDefault("fat", BigDecimal.ZERO))
+                                .totalCalories(
+                                        newRecipe.getCalories() != null ? newRecipe.getCalories() : BigDecimal.ZERO)
+                                .build())
+                        .build())
+                .nutritionSummaryOfDay(dayNutrition)
+                .build();
+
+        return response;
+    }
+
+    private NutritionSummaryResponse calculateDayNutritionSummary(MealDay mealDay) {
+        BigDecimal totalCalories = BigDecimal.ZERO;
+        BigDecimal totalProtein = BigDecimal.ZERO;
+        BigDecimal totalCarbs = BigDecimal.ZERO;
+        BigDecimal totalFat = BigDecimal.ZERO;
+
+        for (MealSlot mealSlot : mealDay.getMealSlots()) {
+            Recipe recipe = mealSlot.getRecipe();
+
+            if (recipe.getCalories() != null) {
+                totalCalories = totalCalories.add(recipe.getCalories());
+            }
+
+            Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
+            totalProtein = totalProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
+            totalCarbs = totalCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
+            totalFat = totalFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
+        }
+
+        return NutritionSummaryResponse.builder()
+                .totalCalories(totalCalories)
+                .protein(totalProtein)
+                .carbs(totalCarbs)
+                .fat(totalFat)
+                .build();
     }
 }

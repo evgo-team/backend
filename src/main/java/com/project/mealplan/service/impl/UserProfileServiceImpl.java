@@ -58,7 +58,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                                 .height(user.getHeight())
                                 .gender(user.getGender())
                                 .bio(user.getBio())
-                                .activityLevel(user.getActivityLevel().name())
+                                .activityLevel(user.getActivityLevel() != null ? user.getActivityLevel().name() : null)
                                 .healthCondition(user.getHealthCondition())
                                 .dietType(user.getDietType())
                                 .profilePicUrl(user.getProfilePicUrl())

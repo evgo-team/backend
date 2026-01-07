@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeeklyMealPlanResponse {
+    private Long id;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate weekStartDate;
 
