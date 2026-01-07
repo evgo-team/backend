@@ -12,6 +12,7 @@ import java.util.Set;
 import com.project.mealplan.common.enums.MealRole;
 import com.project.mealplan.common.enums.MealType;
 import com.project.mealplan.common.enums.RecipeStatus;
+import com.project.mealplan.dtos.mealplan.response.NutritionDetailResponse;
 import java.math.BigDecimal;
 
 @Data
@@ -25,6 +26,7 @@ public class RecipeResponseDto {
     private Integer cookingTimeMinutes;
     private String imageUrl;
     private BigDecimal calories;
+    private NutritionDetailResponse nutrition;
     private RecipeStatus status;
     private MealRole role;
     private MealType mealType;

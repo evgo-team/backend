@@ -31,4 +31,14 @@ public interface ShoppingListService {
      * Delete a shopping list item
      */
     void deleteShoppingListItem(Long userId, Long itemId);
+
+    /**
+     * Bulk check items (mark as purchased and move to pantry)
+     */
+    void bulkCheckItems(Long userId, java.util.List<Long> itemIds);
+
+    /**
+     * Bulk delete items
+     */
+    void bulkDeleteItems(Long userId, java.util.List<Long> itemIds);
 }

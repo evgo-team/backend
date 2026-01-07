@@ -156,6 +156,32 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         log.info("Shopping list item deleted: {}", itemId);
     }
 
+    @Override
+    @Transactional
+    public void bulkCheckItems(Long userId, List<Long> itemIds) {
+        log.info("Bulk checking {} items for user {}", itemIds.size(), userId);
+        for (Long itemId : itemIds) {
+            ShoppingListItem item = shoppingListItemRepository.findByIdAndShoppingList_User_UserId(itemId, userId)
+                    .orElse(null);
+            if (item != null) {
+                addToPantry(userId, item);
+                shoppingListItemRepository.delete(item);
+            }
+        }
+        log.info("Bulk check completed for {} items", itemIds.size());
+    }
+
+    @Override
+    @Transactional
+    public void bulkDeleteItems(Long userId, List<Long> itemIds) {
+        log.info("Bulk deleting {} items for user {}", itemIds.size(), userId);
+        for (Long itemId : itemIds) {
+            shoppingListItemRepository.findByIdAndShoppingList_User_UserId(itemId, userId)
+                    .ifPresent(shoppingListItemRepository::delete);
+        }
+        log.info("Bulk delete completed for {} items", itemIds.size());
+    }
+
     // =============== Private Helper Methods ===============
 
     /**

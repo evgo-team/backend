@@ -108,4 +108,26 @@ public class ShoppingListController {
                                 .message("Shopping list item deleted successfully")
                                 .build());
         }
+
+        @Operation(summary = "Bulk check shopping list items", description = "Mark multiple items as checked (purchased) and move them to pantry")
+        @PutMapping("/items/bulk-check")
+        public ResponseEntity<ApiResponse<Void>> bulkCheckItems(@RequestBody java.util.List<Long> itemIds) {
+                Long currentUserId = SecurityUtil.getCurrentUserId();
+                shoppingListService.bulkCheckItems(currentUserId, itemIds);
+                return ResponseEntity.ok(ApiResponse.<Void>builder()
+                                .status(HttpStatus.OK.value())
+                                .message("Items checked and added to pantry successfully")
+                                .build());
+        }
+
+        @Operation(summary = "Bulk delete shopping list items", description = "Delete multiple items at once")
+        @DeleteMapping("/items/bulk-delete")
+        public ResponseEntity<ApiResponse<Void>> bulkDeleteItems(@RequestBody java.util.List<Long> itemIds) {
+                Long currentUserId = SecurityUtil.getCurrentUserId();
+                shoppingListService.bulkDeleteItems(currentUserId, itemIds);
+                return ResponseEntity.ok(ApiResponse.<Void>builder()
+                                .status(HttpStatus.OK.value())
+                                .message("Items deleted successfully")
+                                .build());
+        }
 }
