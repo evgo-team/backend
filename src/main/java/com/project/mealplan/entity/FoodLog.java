@@ -52,4 +52,10 @@ public class FoodLog {
     @Column(precision = 5, scale = 2)
     @Builder.Default
     private BigDecimal quantity = BigDecimal.ONE;
+
+    /**
+     * Reference to meal slot if this food log was created from marking a meal as consumed.
+     */
+    @Column(name = "meal_slot_id")
+    private Long mealSlotId;
 }

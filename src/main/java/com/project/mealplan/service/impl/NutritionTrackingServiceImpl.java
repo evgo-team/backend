@@ -262,42 +262,20 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
                         return result;
                 }
 
-                // Calculate from meal plan (consumed meals only)
-                Optional<MealDay> mealDayOpt = mealDayRepository.findByMealPlan_User_UserIdAndDate(userId, date);
-
+                // Calculate from Food Logs only (includes both ad-hoc and consumed meal plan
+                // entries)
+                // Note: Consumed meals from meal plan now create FoodLog entries automatically
                 BigDecimal totalCalories = BigDecimal.ZERO;
                 BigDecimal totalProtein = BigDecimal.ZERO;
                 BigDecimal totalCarbs = BigDecimal.ZERO;
                 BigDecimal totalFat = BigDecimal.ZERO;
 
-                if (mealDayOpt.isPresent()) {
-                        MealDay mealDay = mealDayOpt.get();
-
-                        for (MealSlot mealSlot : mealDay.getMealSlots()) {
-                                // Only count consumed meals
-                                if (!Boolean.TRUE.equals(mealSlot.getConsumed())) {
-                                        continue;
-                                }
-
-                                Recipe recipe = mealSlot.getRecipe();
-
-                                if (recipe.getCalories() != null) {
-                                        totalCalories = totalCalories.add(recipe.getCalories());
-                                }
-
-                                Map<String, BigDecimal> nutrition = calculateRecipeNutrition(recipe);
-                                totalProtein = totalProtein.add(nutrition.getOrDefault("protein", BigDecimal.ZERO));
-                                totalCarbs = totalCarbs.add(nutrition.getOrDefault("carbs", BigDecimal.ZERO));
-                                totalFat = totalFat.add(nutrition.getOrDefault("fat", BigDecimal.ZERO));
-                        }
-                }
-
-                // Also include food logs (ad-hoc food consumption)
                 LocalDateTime startOfDay = date.atStartOfDay();
                 LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
                 List<FoodLog> foodLogs = foodLogRepository.findByUser_UserIdAndConsumeDateBetweenOrderByConsumeDateAsc(
                                 userId,
                                 startOfDay, endOfDay);
+
                 for (FoodLog foodLog : foodLogs) {
                         Recipe recipe = foodLog.getRecipe();
                         BigDecimal quantity = foodLog.getQuantity() != null ? foodLog.getQuantity() : BigDecimal.ONE;
@@ -387,28 +365,57 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
                                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
                                                 "Meal slot not found or access denied"));
 
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
                 // Update consumed status
                 boolean wasConsumed = Boolean.TRUE.equals(mealSlot.getConsumed());
                 boolean isNowConsumed = Boolean.TRUE.equals(consumed);
 
                 mealSlot.setConsumed(isNowConsumed);
 
+                LocalDateTime consumedAt = null;
                 if (isNowConsumed && !wasConsumed) {
-                        mealSlot.setConsumedAt(java.time.LocalDateTime.now());
+                        consumedAt = LocalDateTime.now();
+                        mealSlot.setConsumedAt(consumedAt);
                 } else if (!isNowConsumed) {
                         mealSlot.setConsumedAt(null);
+                } else {
+                        consumedAt = mealSlot.getConsumedAt();
                 }
 
                 mealSlotRepository.save(mealSlot);
 
-                // Invalidate cached nutrition log for this date
+                Recipe recipe = mealSlot.getRecipe();
                 LocalDate date = mealSlot.getMealDay().getDate();
+
+                // Sync to FoodLog
+                if (isNowConsumed && !wasConsumed) {
+                        // Create FoodLog entry when marking as consumed
+                        FoodLog foodLog = FoodLog.builder()
+                                        .user(user)
+                                        .recipe(recipe)
+                                        .consumeDate(consumedAt != null ? consumedAt : date.atStartOfDay())
+                                        .quantity(BigDecimal.ONE)
+                                        .mealSlotId(mealSlotId)
+                                        .build();
+                        foodLogRepository.save(foodLog);
+                        log.info("Created FoodLog for meal slot {} (recipe: {})", mealSlotId, recipe.getTitle());
+                } else if (!isNowConsumed && wasConsumed) {
+                        // Delete FoodLog entry when un-marking
+                        foodLogRepository.findByMealSlotIdAndUser_UserId(mealSlotId, userId)
+                                        .ifPresent(foodLog -> {
+                                                foodLogRepository.delete(foodLog);
+                                                log.info("Deleted FoodLog for meal slot {}", mealSlotId);
+                                        });
+                }
+
+                // Invalidate cached nutrition log for this date
                 dailyNutritionLogRepository.findByUser_UserIdAndDate(userId, date)
                                 .ifPresent(dailyNutritionLogRepository::delete);
 
                 log.info("User {} marked meal slot {} as consumed={}", userId, mealSlotId, isNowConsumed);
 
-                Recipe recipe = mealSlot.getRecipe();
                 return MealConsumedResponse.builder()
                                 .mealSlotId(mealSlotId)
                                 .recipeId(recipe.getRecipeId())
