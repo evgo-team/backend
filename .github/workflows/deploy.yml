@@ -10,22 +10,45 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-      - name: Debug
+      - name: Debug environment
         run: |
           whoami
           pwd
           docker --version
-          docker-compose version
+          docker compose version || docker-compose version
+
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          # App
+          SERVER_PORT=8080
+          SPRING_PROFILES_ACTIVE=prod
+
+          # Database
+          DB_NAME=mealpal
+          DB_USERNAME=postgres
+          DB_PASSWORD=postgres
+          DB_PORT=5432
+
+          # Redis
+          REDIS_PORT=6379
+
+          # JWT
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION=3600000
+          JWT_REFRESH_EXPIRATION=86400000
+          EOF
 
       - name: Build backend
         run: mvn clean package -DskipTests
 
-      - name: Deploy
+      - name: Deploy with Docker Compose
         run: |
-          docker-compose down || true
-          docker-compose up -d --build
+          docker compose down || true
+          docker compose up -d --build
 
-      - name: Verify
+      - name: Verify containers
         run: docker ps
