@@ -41,4 +41,10 @@ public interface ShoppingListService {
      * Bulk delete items
      */
     void bulkDeleteItems(Long userId, java.util.List<Long> itemIds);
+
+    /**
+     * Add a single item to user's shopping list
+     */
+    ShoppingListItemResponse addItem(Long userId, Long ingredientId, Double quantity,
+            com.project.mealplan.common.enums.IngredientUnit unit);
 }

@@ -182,6 +182,48 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         log.info("Bulk delete completed for {} items", itemIds.size());
     }
 
+    @Override
+    @Transactional
+    public ShoppingListItemResponse addItem(Long userId, Long ingredientId, Double quantity, IngredientUnit unit) {
+        log.info("Adding item to shopping list for user {}: ingredientId={}, quantity={}, unit={}",
+                userId, ingredientId, quantity, unit);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new AppException(ErrorCode.INGREDIENT_NOT_FOUND));
+
+        // Get or create shopping list
+        ShoppingList shoppingList = getOrCreateShoppingList(user);
+
+        // Check if ingredient already exists in shopping list
+        Optional<ShoppingListItem> existingItem = shoppingList.getItems().stream()
+                .filter(item -> item.getIngredient().getId().equals(ingredientId) && item.getUnit() == unit)
+                .findFirst();
+
+        ShoppingListItem savedItem;
+        if (existingItem.isPresent()) {
+            // Update existing item - add to quantity
+            ShoppingListItem item = existingItem.get();
+            item.setQuantity(item.getQuantity() + quantity);
+            savedItem = shoppingListItemRepository.save(item);
+            log.info("Updated existing shopping list item, new quantity: {}", item.getQuantity());
+        } else {
+            // Create new item
+            ShoppingListItem newItem = new ShoppingListItem();
+            newItem.setIngredient(ingredient);
+            newItem.setQuantity(quantity);
+            newItem.setUnit(unit);
+            newItem.setIsChecked(false);
+            shoppingList.addItem(newItem);
+            savedItem = shoppingListItemRepository.save(newItem);
+            log.info("Created new shopping list item with id: {}", savedItem.getId());
+        }
+
+        return shoppingListItemResponseConverter.convert(savedItem);
+    }
+
     // =============== Private Helper Methods ===============
 
     /**
