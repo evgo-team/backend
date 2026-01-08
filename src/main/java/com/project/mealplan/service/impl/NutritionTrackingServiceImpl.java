@@ -272,9 +272,12 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
 
                 LocalDateTime startOfDay = date.atStartOfDay();
                 LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
-                List<FoodLog> foodLogs = foodLogRepository.findByUser_UserIdAndConsumeDateBetweenOrderByConsumeDateAsc(
-                                userId,
-                                startOfDay, endOfDay);
+                // Use exclusive end query to avoid boundary issues (>= startOfDay AND <
+                // endOfDay)
+                List<FoodLog> foodLogs = foodLogRepository
+                                .findByUser_UserIdAndConsumeDateGreaterThanEqualAndConsumeDateLessThanOrderByConsumeDateAsc(
+                                                userId,
+                                                startOfDay, endOfDay);
 
                 for (FoodLog foodLog : foodLogs) {
                         Recipe recipe = foodLog.getRecipe();
@@ -374,9 +377,13 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
 
                 mealSlot.setConsumed(isNowConsumed);
 
+                // Get the meal plan day's date (not current date)
+                LocalDate mealDate = mealSlot.getMealDay().getDate();
                 LocalDateTime consumedAt = null;
+
                 if (isNowConsumed && !wasConsumed) {
-                        consumedAt = LocalDateTime.now();
+                        // Add 1 minute to avoid midnight boundary issues with BETWEEN queries
+                        consumedAt = mealDate.atStartOfDay().plusMinutes(1);
                         mealSlot.setConsumedAt(consumedAt);
                 } else if (!isNowConsumed) {
                         mealSlot.setConsumedAt(null);
@@ -387,15 +394,14 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
                 mealSlotRepository.save(mealSlot);
 
                 Recipe recipe = mealSlot.getRecipe();
-                LocalDate date = mealSlot.getMealDay().getDate();
+                LocalDate date = mealDate;
 
-                // Sync to FoodLog
                 if (isNowConsumed && !wasConsumed) {
-                        // Create FoodLog entry when marking as consumed
                         FoodLog foodLog = FoodLog.builder()
                                         .user(user)
                                         .recipe(recipe)
-                                        .consumeDate(consumedAt != null ? consumedAt : date.atStartOfDay())
+                                        // Add 1 minute to avoid midnight boundary issues
+                                        .consumeDate(mealDate.atStartOfDay().plusMinutes(1))
                                         .quantity(BigDecimal.ONE)
                                         .mealSlotId(mealSlotId)
                                         .build();
@@ -462,10 +468,12 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
         public DailyFoodLogsResponse getFoodLogs(Long userId, LocalDate date) {
                 LocalDateTime startOfDay = date.atStartOfDay();
                 LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
-
-                List<FoodLog> foodLogs = foodLogRepository.findByUser_UserIdAndConsumeDateBetweenOrderByConsumeDateAsc(
-                                userId,
-                                startOfDay, endOfDay);
+                // Use exclusive end query to avoid boundary issues (>= startOfDay AND <
+                // endOfDay)
+                List<FoodLog> foodLogs = foodLogRepository
+                                .findByUser_UserIdAndConsumeDateGreaterThanEqualAndConsumeDateLessThanOrderByConsumeDateAsc(
+                                                userId,
+                                                startOfDay, endOfDay);
 
                 List<FoodLogResponse> responses = foodLogs.stream()
                                 .map(this::mapToFoodLogResponse)
@@ -507,6 +515,19 @@ public class NutritionTrackingServiceImpl implements NutritionTrackingService {
 
                 FoodLog foodLog = foodLogRepository.findById(foodLogId).orElse(null);
                 LocalDate logDate = foodLog != null ? foodLog.getConsumeDate().toLocalDate() : null;
+
+                // If this FoodLog was linked to a MealSlot, update the MealSlot's consumed
+                // status
+                if (foodLog != null && foodLog.getMealSlotId() != null) {
+                        mealSlotRepository.findById(foodLog.getMealSlotId())
+                                        .ifPresent(mealSlot -> {
+                                                mealSlot.setConsumed(false);
+                                                mealSlot.setConsumedAt(null);
+                                                mealSlotRepository.save(mealSlot);
+                                                log.info("Updated MealSlot {} consumed=false due to FoodLog deletion",
+                                                                foodLog.getMealSlotId());
+                                        });
+                }
 
                 foodLogRepository.deleteById(foodLogId);
 

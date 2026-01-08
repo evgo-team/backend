@@ -11,9 +11,13 @@ import com.project.mealplan.entity.FoodLog;
 
 @Repository
 public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
-
+    // Use this for date range queries where end is exclusive
     List<FoodLog> findByUser_UserIdAndConsumeDateBetweenOrderByConsumeDateAsc(Long userId, LocalDateTime startDate,
             LocalDateTime endDate);
+
+    // Use this for proper day queries: >= startDate AND < endDate (exclusive end)
+    List<FoodLog> findByUser_UserIdAndConsumeDateGreaterThanEqualAndConsumeDateLessThanOrderByConsumeDateAsc(
+            Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
     void deleteByIdAndUser_UserId(Long id, Long userId);
 
