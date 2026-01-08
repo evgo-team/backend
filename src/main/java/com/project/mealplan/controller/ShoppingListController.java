@@ -109,6 +109,23 @@ public class ShoppingListController {
                                 .build());
         }
 
+        @Operation(summary = "Add a single item to shopping list", description = "Add an ingredient to the user's shopping list. If the ingredient already exists with the same unit, the quantity will be added.")
+        @PostMapping("/items")
+        public ResponseEntity<ApiResponse<ShoppingListItemResponse>> addShoppingListItem(
+                        @RequestBody @Valid com.project.mealplan.dtos.shoppinglist.request.AddShoppingListItemRequest request) {
+                Long currentUserId = SecurityUtil.getCurrentUserId();
+                ShoppingListItemResponse response = shoppingListService.addItem(
+                                currentUserId,
+                                request.getIngredientId(),
+                                request.getQuantity(),
+                                request.getUnit());
+                return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<ShoppingListItemResponse>builder()
+                                .status(HttpStatus.CREATED.value())
+                                .message("Item added to shopping list successfully")
+                                .data(response)
+                                .build());
+        }
+
         @Operation(summary = "Bulk check shopping list items", description = "Mark multiple items as checked (purchased) and move them to pantry")
         @PutMapping("/items/bulk-check")
         public ResponseEntity<ApiResponse<Void>> bulkCheckItems(@RequestBody java.util.List<Long> itemIds) {
