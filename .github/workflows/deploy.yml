@@ -1,4 +1,4 @@
-name: Deploy to Azure VM
+name: Deploy to Azure VM (Self-hosted)
 
 on:
   push:
@@ -6,93 +6,31 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  REGISTRY: ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}
-  IMAGE_NAME: mealpal-backend
-
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
+    runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Build Backend with Maven
-        run: mvn clean package -DskipTests -q
-
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-
-      - name: Build Docker image
+      - name: Debug environment
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+          whoami
+          hostname
+          pwd
+          docker --version
+          docker compose version
 
-      - name: Push Docker image to ACR
+      - name: Build backend (Maven)
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          mvn clean package -DskipTests
 
-      - name: Deploy to Azure VM
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            VM_NAME="${{ secrets.AZURE_VM_NAME }}"
-            RESOURCE_GROUP="${{ secrets.AZURE_RESOURCE_GROUP }}"
-            
-            az vm run-command invoke \
-              --resource-group "$RESOURCE_GROUP" \
-              --name "$VM_NAME" \
-              --command-id RunShellScript \
-              --scripts "
-                #!/bin/bash
-                set -e
-                
-                docker login ${{ env.REGISTRY }} \
-                  -u ${{ secrets.AZURE_REGISTRY_USERNAME }} \
-                  -p ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-                
-                docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-                docker stop mealpal-backend || true
-                docker rm mealpal-backend || true
-                
-                export \$(cat /home/${{ secrets.VM_USERNAME }}/.env | xargs)
-                cd /home/${{ secrets.VM_USERNAME }}/mealpal-app
-                docker-compose down || true
-                docker-compose up -d
-              "
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose down || true
+          docker compose up -d --build
 
-      - name: Verify Deployment
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            VM_NAME="${{ secrets.AZURE_VM_NAME }}"
-            RESOURCE_GROUP="${{ secrets.AZURE_RESOURCE_GROUP }}"
-            
-            az vm run-command invoke \
-              --resource-group "$RESOURCE_GROUP" \
-              --name "$VM_NAME" \
-              --command-id RunShellScript \
-              --scripts "docker ps | grep mealpal-backend && echo 'Backend is running!'"
-
-      - name: Deployment Success
-        run: echo "✅ Deployment completed successfully!"
+      - name: Verify containers
+        run: |
+          docker ps
