@@ -5,6 +5,22 @@ MealPal là ứng dụng di động hỗ trợ người dùng lập kế hoạch
 
 ---
 
+## Features
+- 🍽️ **Lập kế hoạch bữa ăn**: Tạo kế hoạch bữa ăn tuần hàng tuần dựa trên sở thích và dinh dưỡng
+- 📦 **Quản lý kho nguyên liệu**: Theo dõi nguyên liệu trong tủ và gợi ý công thức phù hợp
+- 📊 **Theo dõi dinh dưỡng**: Ghi lại thông tin dinh dưỡng hàng ngày để duy trì sức khỏe tối ưu
+- 🛒 **Danh sách mua sắm**: Tự động tạo danh sách mua sắm từ kế hoạch bữa ăn
+- 👨‍🍳 **Kho công thức phong phú**: Truy cập hàng ngàn công thức nấu ăn đa dạng
+
+## Tech Stack
+- **Backend**: Java Spring Boot
+- **Frontend**: React Native (Expo)
+- **Database**: PostgreSQL
+- **Authentication**: JWT
+- **Containerization**: Docker & Docker Compose
+
+---
+
 ## Getting Started
 
 ### Clone repository
