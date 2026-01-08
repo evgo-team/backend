@@ -11,7 +11,9 @@ import com.project.mealplan.dtos.recipe.request.UpdateRecipeStatus;
 import com.project.mealplan.dtos.recipe.response.RecipeResponseDto;
 import com.project.mealplan.dtos.recipe.response.RecipeShortResponse;
 import com.project.mealplan.dtos.recipe.DeleteRecipesDto;
+import com.project.mealplan.dtos.mealplan.response.NutritionDetailResponse;
 import com.project.mealplan.entity.Ingredient;
+import com.project.mealplan.entity.IngredientNutrition;
 import com.project.mealplan.entity.Recipe;
 import com.project.mealplan.entity.RecipeCategory;
 import com.project.mealplan.entity.RecipeIngredient;
@@ -41,6 +43,7 @@ import java.util.stream.Collectors;
 import com.project.mealplan.common.util.CalculateCalories;
 import com.project.mealplan.common.util.CalculateRecipeScore;
 import com.project.mealplan.common.util.CalculateDailyCalories;
+import com.project.mealplan.common.util.UnitConverter;
 
 @Service
 @RequiredArgsConstructor
@@ -304,8 +307,64 @@ public class RecipeServiceImpl implements RecipeService {
                 .collect(Collectors.toList());
         dto.setIngredients(ingList);
         dto.setCalories(recipe.getCalories());
+        dto.setNutrition(calculateNutrition(recipe));
 
         return dto;
+    }
+
+    private NutritionDetailResponse calculateNutrition(Recipe recipe) {
+        if (recipe == null || recipe.getIngredients() == null || recipe.getIngredients().isEmpty()) {
+            return NutritionDetailResponse.builder()
+                    .protein(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
+                    .carbs(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
+                    .fat(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
+                    .build();
+        }
+
+        BigDecimal totalProtein = BigDecimal.ZERO;
+        BigDecimal totalCarbs = BigDecimal.ZERO;
+        BigDecimal totalFat = BigDecimal.ZERO;
+
+        for (RecipeIngredient ri : recipe.getIngredients()) {
+            if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
+            
+            Ingredient ing = ri.getIngredient();
+            BigDecimal quantityInGrams = UnitConverter.toGram(
+                BigDecimal.valueOf(ri.getQuantity()), 
+                ri.getUnit(), 
+                ing.getDensity()
+            );
+
+            // Calculate nutrition for each type
+            for (IngredientNutrition nutrition : ing.getNutritions()) {
+                if (nutrition.getNutritionType() == null || nutrition.getAmountPer100g() == null) continue;
+                
+                String nutritionName = nutrition.getNutritionType().getName().toLowerCase();
+                BigDecimal amountPer100g = nutrition.getAmountPer100g();
+                BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
+                BigDecimal amount = quantityInGrams.multiply(perGram);
+
+                switch (nutritionName) {
+                    case "protein":
+                        totalProtein = totalProtein.add(amount);
+                        break;
+                    case "carbohydrates":
+                    case "carbs":
+                        totalCarbs = totalCarbs.add(amount);
+                        break;
+                    case "fat":
+                    case "fats":
+                        totalFat = totalFat.add(amount);
+                        break;
+                }
+            }
+        }
+
+        return NutritionDetailResponse.builder()
+                .protein(totalProtein.setScale(2, RoundingMode.HALF_UP))
+                .carbs(totalCarbs.setScale(2, RoundingMode.HALF_UP))
+                .fat(totalFat.setScale(2, RoundingMode.HALF_UP))
+                .build();
     }
 
     @Override
