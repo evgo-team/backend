@@ -14,7 +14,8 @@ MealPal là ứng dụng di động hỗ trợ người dùng lập kế hoạch
 
 ## Tech Stack
 - **Backend**: Java Spring Boot
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL, Redis
+- **API Documentation**: Swagger
 - **Authentication**: JWT
 - **Containerization**: Docker & Docker Compose
 
