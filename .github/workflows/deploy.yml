@@ -1,9 +1,8 @@
-name: Deploy to Azure VM (Self-hosted)
+name: Deploy to Azure VM
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -11,26 +10,22 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Debug environment
+      - name: Debug
         run: |
           whoami
-          hostname
           pwd
           docker --version
-          docker compose version
+          docker-compose version
 
-      - name: Build backend (Maven)
-        run: |
-          mvn clean package -DskipTests
+      - name: Build backend
+        run: mvn clean package -DskipTests
 
-      - name: Deploy with Docker Compose
+      - name: Deploy
         run: |
-          docker compose down || true
-          docker compose up -d --build
+          docker-compose down || true
+          docker-compose up -d --build
 
-      - name: Verify containers
-        run: |
-          docker ps
+      - name: Verify
+        run: docker ps
