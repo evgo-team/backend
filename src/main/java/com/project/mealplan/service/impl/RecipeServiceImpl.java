@@ -118,7 +118,7 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setCalories(CalculateCalories.computeRecipeCalories(recipe));
         Recipe saved = recipeRepository.save(recipe);
         return convertToDto(saved);
-    } 
+    }
 
     @Override
     @Transactional
@@ -127,7 +127,8 @@ public class RecipeServiceImpl implements RecipeService {
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
         // Check permissions
-        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+        boolean isOwner = recipe.getCreatedBy() != null
+                && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
 
         if (currentUser.isUser()) {
             if (!isOwner) {
@@ -138,10 +139,10 @@ public class RecipeServiceImpl implements RecipeService {
             }
             // USER (owner, DRAFT) không được phép đổi status.
             if (dto.getStatus() != null && dto.getStatus() != RecipeStatus.DRAFT) {
-                 throw new AppException(ErrorCode.VALIDATION_ERROR, "Bạn không có quyền thay đổi trạng thái của công thức.");
+                throw new AppException(ErrorCode.VALIDATION_ERROR,
+                        "Bạn không có quyền thay đổi trạng thái của công thức.");
             }
         }
-
 
         boolean changed = false;
 
@@ -153,7 +154,8 @@ public class RecipeServiceImpl implements RecipeService {
             throw new AppException(ErrorCode.VALIDATION_ERROR, "Invalid recipe status");
         }
 
-        // Title required (DTO validation should enforce), check uniqueness when publishing
+        // Title required (DTO validation should enforce), check uniqueness when
+        // publishing
         if (dto.getTitle() != null && !dto.getTitle().equals(recipe.getTitle())) {
             if (newStatus == RecipeStatus.PUBLISHED) {
                 boolean exists = recipeRepository.existsByTitleAndStatus(dto.getTitle(), RecipeStatus.PUBLISHED);
@@ -175,14 +177,16 @@ public class RecipeServiceImpl implements RecipeService {
             changed = true;
         }
 
-        if (dto.getCookingTimeMinutes() != null && !Objects.equals(dto.getCookingTimeMinutes(), recipe.getCookingTimeMinutes())) {
+        if (dto.getCookingTimeMinutes() != null
+                && !Objects.equals(dto.getCookingTimeMinutes(), recipe.getCookingTimeMinutes())) {
             recipe.setCookingTimeMinutes(dto.getCookingTimeMinutes());
             changed = true;
         }
 
-        // if (dto.getCategory() != null && !Objects.equals(dto.getCategory(), recipe.getCategory())) {
-        //     recipe.setCategory(dto.getCategory());
-        //     changed = true;
+        // if (dto.getCategory() != null && !Objects.equals(dto.getCategory(),
+        // recipe.getCategory())) {
+        // recipe.setCategory(dto.getCategory());
+        // changed = true;
         // }
 
         if (dto.getImageUrl() != null && !Objects.equals(dto.getImageUrl(), recipe.getImageUrl())) {
@@ -302,8 +306,7 @@ public class RecipeServiceImpl implements RecipeService {
                         ri.getIngredient() != null ? ri.getIngredient().getId() : null,
                         ri.getIngredient() != null ? ri.getIngredient().getName() : null,
                         ri.getQuantity(),
-                        ri.getUnit()
-                ))
+                        ri.getUnit()))
                 .collect(Collectors.toList());
         dto.setIngredients(ingList);
         dto.setCalories(recipe.getCalories());
@@ -326,19 +329,20 @@ public class RecipeServiceImpl implements RecipeService {
         BigDecimal totalFat = BigDecimal.ZERO;
 
         for (RecipeIngredient ri : recipe.getIngredients()) {
-            if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null) continue;
-            
+            if (ri == null || ri.getIngredient() == null || ri.getQuantity() == null)
+                continue;
+
             Ingredient ing = ri.getIngredient();
             BigDecimal quantityInGrams = UnitConverter.toGram(
-                BigDecimal.valueOf(ri.getQuantity()), 
-                ri.getUnit(), 
-                ing.getDensity()
-            );
+                    BigDecimal.valueOf(ri.getQuantity()),
+                    ri.getUnit(),
+                    ing.getDensity());
 
             // Calculate nutrition for each type
             for (IngredientNutrition nutrition : ing.getNutritions()) {
-                if (nutrition.getNutritionType() == null || nutrition.getAmountPer100g() == null) continue;
-                
+                if (nutrition.getNutritionType() == null || nutrition.getAmountPer100g() == null)
+                    continue;
+
                 String nutritionName = nutrition.getNutritionType().getName().toLowerCase();
                 BigDecimal amountPer100g = nutrition.getAmountPer100g();
                 BigDecimal perGram = amountPer100g.multiply(new BigDecimal("0.01"));
@@ -348,6 +352,7 @@ public class RecipeServiceImpl implements RecipeService {
                     case "protein":
                         totalProtein = totalProtein.add(amount);
                         break;
+                    case "carbohydrate": // Match DB value (singular)
                     case "carbohydrates":
                     case "carbs":
                         totalCarbs = totalCarbs.add(amount);
@@ -397,7 +402,8 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
-        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+        boolean isOwner = recipe.getCreatedBy() != null
+                && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
 
         if (currentUser.isUser() && !isOwner) {
             throw new AppException(ErrorCode.FORBIDDEN, "Bạn không có quyền xóa công thức này");
@@ -506,7 +512,8 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
-        boolean isOwner = recipe.getCreatedBy() != null && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
+        boolean isOwner = recipe.getCreatedBy() != null
+                && recipe.getCreatedBy().getUserId().equals(currentUser.getId());
 
         RecipeStatus targetStatus = status != null ? status.getStatus() : null;
         if (targetStatus == null) {
@@ -515,7 +522,8 @@ public class RecipeServiceImpl implements RecipeService {
 
         if (currentUser.isUser()) {
             if (!isOwner) {
-                throw new AppException(ErrorCode.FORBIDDEN, "You do not have permission to update the status of this recipe");
+                throw new AppException(ErrorCode.FORBIDDEN,
+                        "You do not have permission to update the status of this recipe");
             }
             if (recipe.getStatus() == RecipeStatus.DRAFT && targetStatus != RecipeStatus.PENDING) {
                 throw new AppException(ErrorCode.FORBIDDEN, "User can only change status from DRAFT to PENDING");
@@ -528,7 +536,8 @@ public class RecipeServiceImpl implements RecipeService {
             }
         } else if (currentUser.isAdmin()) {
             if (recipe.getStatus() != RecipeStatus.PENDING) {
-                throw new AppException(ErrorCode.VALIDATION_ERROR, "Admin can only change status when recipe is PENDING");
+                throw new AppException(ErrorCode.VALIDATION_ERROR,
+                        "Admin can only change status when recipe is PENDING");
             }
             if (targetStatus != RecipeStatus.DRAFT && targetStatus != RecipeStatus.PUBLISHED) {
                 throw new AppException(ErrorCode.VALIDATION_ERROR, "Admin can only set status to DRAFT or PUBLISHED");
@@ -586,8 +595,7 @@ public class RecipeServiceImpl implements RecipeService {
                             recipe,
                             targetCaloriesPerMeal,
                             pantryIngredientIds,
-                            favoriteRecipeIds
-                    );
+                            favoriteRecipeIds);
                     return new ScoredRecipe(recipe, score);
                 })
                 .sorted(Comparator.comparingDouble(ScoredRecipe::score).reversed())
@@ -627,12 +635,12 @@ public class RecipeServiceImpl implements RecipeService {
                 recipe.getStatus(),
                 categories,
                 recipe.getCookingTimeMinutes(),
-                recipe.getCalories()
-        );
+                recipe.getCalories());
     }
 
     /**
      * Helper record to hold recipe and its score
      */
-    private record ScoredRecipe(Recipe recipe, double score) {}
+    private record ScoredRecipe(Recipe recipe, double score) {
+    }
 }
